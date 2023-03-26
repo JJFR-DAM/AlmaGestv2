@@ -9,13 +9,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:almagestv2/models/models.dart';
 
 class UserService extends ChangeNotifier {
-  final String baseURL = 'semillero.allsites.es/public/api/';
+  final String baseURL = 'semillero.allsites.es';
   final storage = const FlutterSecureStorage();
   bool isLoading = true;
   final List<UserData> users = [];
   String user = '';
 
-  Future<String?> createUser(
+  Future<String?> register(
     String firstname,
     String secondname,
     String email,
@@ -30,13 +30,13 @@ class UserService extends ChangeNotifier {
       'c_password': cpassword,
     };
 
-    final url = Uri.http(baseURL, 'register', {});
+    final url = Uri.http(baseURL, '/public/api/register', {});
 
     final response = await http.post(url,
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
-          "Authorization": "Some token"
+          "Authorization": "Some token",
         },
         body: json.encode(authData));
     final Map<String, dynamic> decoded = json.decode(response.body);
@@ -63,13 +63,13 @@ class UserService extends ChangeNotifier {
       'password': password,
     };
 
-    final url = Uri.http(baseURL, 'login', {});
+    final url = Uri.http(baseURL, '/public/api/login', {});
 
     final response = await http.post(url,
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
-          "Authorization": "Some token"
+          "Authorization": "Some token",
         },
         body: json.encode(authData));
 
@@ -99,7 +99,7 @@ class UserService extends ChangeNotifier {
   }
 
   Future<List<UserData>> getUsers() async {
-    final url = Uri.http(baseURL, 'users');
+    final url = Uri.http(baseURL, '/public/api/users');
     String? token = await readToken();
     isLoading = true;
     notifyListeners();
@@ -108,7 +108,7 @@ class UserService extends ChangeNotifier {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $token'
+        'Authorization': 'Bearer $token',
       },
     );
     final Map<String, dynamic> decode = json.decode(resp.body);
@@ -123,8 +123,31 @@ class UserService extends ChangeNotifier {
     return users;
   }
 
+  getUser() async {
+    String? token = await readToken();
+    String? id = await readId();
+
+    final url = Uri.http(baseURL, '/public/api/user/$id');
+    isLoading = true;
+    notifyListeners();
+    final resp = await http.get(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
+    final Map<String, dynamic> decodedResp = json.decode(resp.body);
+    await storage.write(
+        key: 'company_id', value: decodedResp['data']['company_id'].toString());
+    isLoading = false;
+    notifyListeners();
+    return decodedResp['data']['company_id'].toString();
+  }
+
   Future postActivate(String id) async {
-    final url = Uri.http(baseURL, 'activate', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/activate', {'user_id': id});
     String? token = await readToken();
     isLoading = true;
     notifyListeners();
@@ -133,13 +156,13 @@ class UserService extends ChangeNotifier {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
       },
     );
   }
 
   Future postDeactivate(String id) async {
-    final url = Uri.http(baseURL, 'deactivate', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/deactivate', {'user_id': id});
     String? token = await readToken();
     isLoading = true;
     notifyListeners();
@@ -148,13 +171,13 @@ class UserService extends ChangeNotifier {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
       },
     );
   }
 
   Future postDelete(String id) async {
-    final url = Uri.http(baseURL, 'delete/', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/delete/', {'user_id': id});
     String? token = '';
     isLoading = true;
     notifyListeners();
@@ -163,7 +186,7 @@ class UserService extends ChangeNotifier {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
       },
     );
   }
@@ -184,7 +207,7 @@ class UserService extends ChangeNotifier {
       'password': password,
       'company_id': companyId
     };
-    final url = Uri.http(baseURL, 'user/update/', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/user/update/', {'user_id': id});
     String? token = '';
     isLoading = true;
     notifyListeners();
@@ -192,7 +215,7 @@ class UserService extends ChangeNotifier {
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
         },
         body: json.encode(authData));
 
