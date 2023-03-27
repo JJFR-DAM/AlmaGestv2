@@ -177,7 +177,7 @@ class UserService extends ChangeNotifier {
   }
 
   Future postDelete(String id) async {
-    final url = Uri.http(baseURL, '/public/api/delete/', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/deleted/$id');
     String? token = '';
     isLoading = true;
     notifyListeners();
@@ -189,6 +189,13 @@ class UserService extends ChangeNotifier {
         "Authorization": "Bearer $token",
       },
     );
+    final Map<String, dynamic> decoded = json.decode(resp.body);
+    if (decoded['success'] == true) {
+      print('succesful');
+    } else {
+      print('unsuccesful');
+      print(decoded.toString());
+    }
   }
 
   Future postUpdate(
