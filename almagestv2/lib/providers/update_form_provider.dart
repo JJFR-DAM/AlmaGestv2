@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 class UpdateFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  String id = '';
   String firstname = '';
   String secondname = '';
   String email = '';
   String password = '';
-  String companyId = '';
+  int companyId = 0;
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   set isLoading(bool value) {

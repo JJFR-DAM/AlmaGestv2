@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:provider/provider.dart';
@@ -108,6 +109,19 @@ class _AdminScreenState extends State<AdminScreen> {
                   motion: const ScrollMotion(),
                   children: [
                     SlidableAction(
+                      onPressed: (context) {
+                        setState(() {
+                          const storage = FlutterSecureStorage();
+                          storage.write(key: 'userId', value: user.id);
+                          Navigator.pushReplacementNamed(context, 'update');
+                        });
+                      },
+                      backgroundColor: const Color.fromARGB(255, 88, 73, 254),
+                      foregroundColor: Colors.white,
+                      icon: Icons.change_circle_outlined,
+                      label: 'Update',
+                    ),
+                    SlidableAction(
                       onPressed: (BuildContext _) async {
                         await CoolAlert.show(
                           context: context,
@@ -120,7 +134,7 @@ class _AdminScreenState extends State<AdminScreen> {
                           onConfirmBtnTap: () {
                             setState(() {
                               userService.postDelete(user.id.toString());
-                              users.removeAt(index);
+                              refresh();
                             });
                           },
                           onCancelBtnTap: () => Navigator.pop(context),
@@ -158,6 +172,19 @@ class _AdminScreenState extends State<AdminScreen> {
                 endActionPane: ActionPane(
                   motion: const ScrollMotion(),
                   children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        setState(() {
+                          const storage = FlutterSecureStorage();
+                          storage.write(key: 'userId', value: user.id);
+                          Navigator.pushReplacementNamed(context, 'update');
+                        });
+                      },
+                      backgroundColor: const Color.fromARGB(255, 88, 73, 254),
+                      foregroundColor: Colors.white,
+                      icon: Icons.change_circle_outlined,
+                      label: 'Update',
+                    ),
                     SlidableAction(
                       onPressed: (BuildContext _) async {
                         await CoolAlert.show(

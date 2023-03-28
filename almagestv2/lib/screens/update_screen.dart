@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
@@ -9,8 +10,8 @@ import 'package:almagestv2/providers/providers.dart';
 import 'package:almagestv2/widgets/widgets.dart';
 import 'package:almagestv2/ui/input_decorations.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+class UpdateScreen extends StatelessWidget {
+  const UpdateScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,22 +25,21 @@ class RegisterScreen extends StatelessWidget {
               child: Column(
             children: [
               const SizedBox(height: 10),
-              Text('Register',
-                  style: Theme.of(context).textTheme.headlineMedium),
+              Text('update', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 30),
               ChangeNotifierProvider(
-                  create: (_) => RegisterFormProvider(), child: _RegisterForm())
+                  create: (_) => UpdateFormProvider(), child: _UpdateForm())
             ],
           )),
           const SizedBox(height: 50),
           TextButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+              onPressed: () => Navigator.pushReplacementNamed(context, 'admin'),
               style: ButtonStyle(
                   overlayColor:
                       MaterialStateProperty.all(Colors.indigo.withOpacity(0.1)),
                   shape: MaterialStateProperty.all(const StadiumBorder())),
               child: const Text(
-                'Are you already registered?',
+                'Leave without update',
                 style: TextStyle(fontSize: 18, color: Colors.black87),
               )),
           const SizedBox(height: 50),
@@ -49,23 +49,23 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
+// ignore: must_be_immutable
+class _UpdateForm extends StatelessWidget with InputValidationMixinUpdate {
   @override
   Widget build(BuildContext context) {
-    final registerForm = Provider.of<RegisterFormProvider>(context);
-
+    final updateForm = Provider.of<UpdateFormProvider>(context);
+    const storage = FlutterSecureStorage();
+    updateForm.id = storage.read(key: 'userId') as String;
     return Form(
-      key: registerForm.formKey,
-      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      key: updateForm.formKey,
       child: Column(
-        // ignore: sort_child_properties_last
         children: [
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.name,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '', labelText: 'Name', prefixIcon: Icons.person),
-            onChanged: (value) => registerForm.firstname = value,
+            onChanged: (value) => updateForm.firstname = value,
             validator: (name) {
               if (isTextValid(name)) {
                 return null;
@@ -79,7 +79,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
             keyboardType: TextInputType.name,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '', labelText: 'Surname', prefixIcon: Icons.person),
-            onChanged: (value) => registerForm.secondname = value,
+            onChanged: (value) => updateForm.secondname = value,
             validator: (surname) {
               if (isTextValid(surname)) {
                 return null;
@@ -95,7 +95,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
                 hintText: 'example@example.com',
                 labelText: 'Email',
                 prefixIcon: Icons.alternate_email_rounded),
-            onChanged: (value) => registerForm.email = value,
+            onChanged: (value) => updateForm.email = value,
             validator: (email) {
               if (isEmailValid(email)) {
                 return null;
@@ -112,31 +112,13 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
                 hintText: '*******',
                 labelText: 'Password',
                 prefixIcon: Icons.lock_outline),
-            onChanged: (value) => registerForm.password = value,
+            onChanged: (value) => updateForm.password = value,
             validator: (password) {
               if (isPasswordValid(password)) {
                 return null;
               } else {
                 return 'Enter a valid password';
               }
-            },
-          ),
-          TextFormField(
-            autocorrect: false,
-            obscureText: true,
-            keyboardType: TextInputType.text,
-            decoration: InputDecorations.authInputDecoration(
-                hintText: '*******',
-                labelText: 'Password',
-                prefixIcon: Icons.lock_outline),
-            onChanged: (value) => registerForm.cpassword = value,
-            validator: (value) {
-              if (value != registerForm.password) {
-                return "The passwords don't match";
-              } else if (value == '') {
-                return "The password cant be null";
-              }
-              return null;
             },
           ),
           const SizedBox(height: 30),
@@ -146,31 +128,30 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
               disabledColor: Colors.grey,
               elevation: 0,
               color: Colors.deepPurple,
-              onPressed: registerForm.isLoading
+              onPressed: updateForm.isLoading
                   ? null
                   : () async {
                       FocusScope.of(context).unfocus();
-                      final userServiec =
+                      final userService =
                           Provider.of<UserService>(context, listen: false);
 
-                      if (!registerForm.isValidForm()) return;
+                      if (!updateForm.isValidForm()) return;
 
-                      registerForm.isLoading = true;
+                      updateForm.isLoading = true;
 
-                      //validar si el login es correcto
-                      final String? errorMessage = await userServiec.register(
-                        registerForm.firstname,
-                        registerForm.secondname,
-                        registerForm.email,
-                        registerForm.password,
-                        registerForm.cpassword,
-                      );
+                      final String? errorMessage = await userService.postUpdate(
+                          updateForm.id,
+                          updateForm.firstname,
+                          updateForm.secondname,
+                          updateForm.email,
+                          updateForm.password,
+                          updateForm.companyId.toString());
                       if (errorMessage == null) {
-                        Navigator.pushReplacementNamed(context, 'login');
+                        const storage = FlutterSecureStorage();
+                        storage.delete(key: 'userId');
+                        Navigator.pushReplacementNamed(context, 'admin');
                       } else {
-                        //mostrar error en pantalla
-                        // customToast('The email is already registered', context);
-                        registerForm.isLoading = false;
+                        updateForm.isLoading = false;
                         print(errorMessage);
                       }
                     },
@@ -178,7 +159,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   child: Text(
-                    registerForm.isLoading ? 'Wait' : 'Register',
+                    updateForm.isLoading ? 'Wait' : 'updated',
                     style: const TextStyle(color: Colors.white),
                   )))
         ],
@@ -201,7 +182,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
   }
 }
 
-mixin InputValidationMixinRegister {
+mixin InputValidationMixinUpdate {
   bool isTextValid(texto) => texto.length > 0;
 
   bool isPasswordValid(password) => password.length > 6;

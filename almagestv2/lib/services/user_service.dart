@@ -15,14 +15,14 @@ class UserService extends ChangeNotifier {
   final List<UserData> users = [];
   String user = '';
 
-  Future<String?> register(
+  Future register(
     String firstname,
     String secondname,
     String email,
     String password,
     String cpassword,
   ) async {
-    final Map<String, dynamic> authData = {
+    final Map<String, dynamic> registerData = {
       'firstname': firstname,
       'secondname': secondname,
       'email': email,
@@ -38,27 +38,19 @@ class UserService extends ChangeNotifier {
           'Accept': 'application/json',
           "Authorization": "Some token",
         },
-        body: json.encode(authData));
-    final Map<String, dynamic> decoded = json.decode(response.body);
+        body: json.encode(registerData));
 
-    if (response.statusCode == 200) {
-      print('success');
-    } else {
-      print('error');
-    }
+    final Map<String, dynamic> decoded = json.decode(response.body);
 
     if (decoded['success'] == true) {
       await storage.write(key: 'token', value: decoded['data']['token']);
       await storage.write(
           key: 'name', value: decoded['data']['name'].toString());
-    } else {
-      return decoded['message'];
-    }
-    return null;
+    } else {}
   }
 
-  Future<String?> login(String email, String password) async {
-    final Map<String, dynamic> authData = {
+  Future login(String email, String password) async {
+    final Map<String, dynamic> registerData = {
       'email': email,
       'password': password,
     };
@@ -71,23 +63,19 @@ class UserService extends ChangeNotifier {
           'Accept': 'application/json',
           "Authorization": "Some token",
         },
-        body: json.encode(authData));
+        body: json.encode(registerData));
 
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     if (decoded['success'] == true) {
       await storage.write(key: 'token', value: decoded['data']['token']);
       await storage.write(key: 'id', value: decoded['data']['id'].toString());
-      return decoded['data']['type'] +
-          ',' +
-          decoded['data']['actived'].toString();
-    } else {
-      return decoded['message'];
-    }
+    } else {}
   }
 
   Future logout() async {
     await storage.delete(key: 'token');
+    await storage.delete(key: 'id');
   }
 
   Future<String> readToken() async {
@@ -122,6 +110,8 @@ class UserService extends ChangeNotifier {
     notifyListeners();
     return users;
   }
+
+//Revisar método getUser para optimizar y verle uso.
 
   getUser() async {
     String? token = await readToken();
@@ -177,8 +167,8 @@ class UserService extends ChangeNotifier {
   }
 
   Future postDelete(String id) async {
-    final url = Uri.http(baseURL, '/public/api/deleted/$id');
-    String? token = '';
+    final url = Uri.http(baseURL, '/public/api/user/deleted/$id');
+    String? token = await readToken();
     isLoading = true;
     notifyListeners();
     final resp = await http.post(
@@ -189,13 +179,6 @@ class UserService extends ChangeNotifier {
         "Authorization": "Bearer $token",
       },
     );
-    final Map<String, dynamic> decoded = json.decode(resp.body);
-    if (decoded['success'] == true) {
-      print('succesful');
-    } else {
-      print('unsuccesful');
-      print(decoded.toString());
-    }
   }
 
   Future postUpdate(
@@ -206,7 +189,7 @@ class UserService extends ChangeNotifier {
     String password,
     String companyId,
   ) async {
-    final Map<String, dynamic> authData = {
+    final Map<String, dynamic> updateData = {
       'user_id': id,
       'firstname': firstname,
       'secondname': secondname,
@@ -215,7 +198,7 @@ class UserService extends ChangeNotifier {
       'company_id': companyId
     };
     final url = Uri.http(baseURL, '/public/api/user/update/', {'user_id': id});
-    String? token = '';
+    String? token = await readToken();
     isLoading = true;
     notifyListeners();
     final response = await http.post(url,
@@ -224,7 +207,7 @@ class UserService extends ChangeNotifier {
           'Accept': 'application/json',
           "Authorization": "Bearer $token",
         },
-        body: json.encode(authData));
+        body: json.encode(updateData));
 
     final Map<String, dynamic> decoded = json.decode(response.body);
 
@@ -232,8 +215,7 @@ class UserService extends ChangeNotifier {
       print('success');
     } else {
       print('error');
+      print(decoded.toString());
     }
-
-    return null;
   }
 }

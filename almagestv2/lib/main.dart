@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
           'login': (_) => const LoginScreen(),
           'register': (_) => const RegisterScreen(),
           'admin': (_) => const AdminScreen(),
+          'update': (_) => const UpdateScreen(),
         },
         theme: ThemeData.light().copyWith(
             scaffoldBackgroundColor: Colors.grey[300],
