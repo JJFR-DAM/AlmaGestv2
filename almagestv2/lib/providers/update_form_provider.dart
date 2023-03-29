@@ -8,7 +8,7 @@ class UpdateFormProvider extends ChangeNotifier {
   String secondname = '';
   String email = '';
   String password = '';
-  int companyId = 0;
+  String companyId = '';
 
   bool _isLoading = false;
 

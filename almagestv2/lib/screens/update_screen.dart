@@ -17,36 +17,39 @@ class UpdateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: AuthBackground(
             child: SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 250),
-          CardContainer(
-              child: Column(
+          child: Column(
             children: [
-              const SizedBox(height: 10),
-              Text('Update', style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 30),
-              ChangeNotifierProvider(
-                  create: (_) => UpdateFormProvider(), child: _UpdateForm())
-            ],
-          )),
-          const SizedBox(height: 50),
-          TextButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, 'admin'),
-              style: ButtonStyle(
-                  overlayColor:
-                      MaterialStateProperty.all(Colors.indigo.withOpacity(0.1)),
-                  shape: MaterialStateProperty.all(const StadiumBorder())),
-              child: const Text(
-                'Leave without update',
-                style: TextStyle(fontSize: 18, color: Colors.black87),
+              const SizedBox(height: 250),
+              CardContainer(
+                  child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Text('Update',
+                      style: Theme.of(context).textTheme.headlineMedium),
+                  const SizedBox(height: 30),
+                  ChangeNotifierProvider(
+                      create: (_) => UpdateFormProvider(), child: _UpdateForm())
+                ],
               )),
-          const SizedBox(height: 50),
-        ],
-      ),
-    )));
+              const SizedBox(height: 50),
+              TextButton(
+                  onPressed: () =>
+                      Navigator.pushReplacementNamed(context, 'admin'),
+                  style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all(
+                          Colors.indigo.withOpacity(0.1)),
+                      shape: MaterialStateProperty.all(const StadiumBorder())),
+                  child: const Text(
+                    'Leave without update',
+                    style: TextStyle(fontSize: 18, color: Colors.black87),
+                  )),
+              const SizedBox(height: 50),
+            ],
+          ),
+        )));
   }
 }
 
@@ -56,7 +59,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
   Widget build(BuildContext context) {
     final updateForm = Provider.of<UpdateFormProvider>(context);
     updateForm.id = UserService().readId().toString();
-    print(updateForm.id);
+    print('El valor del id es: ${updateForm.id}');
     return Form(
       key: updateForm.formKey,
       child: Column(
