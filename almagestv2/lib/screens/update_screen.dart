@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'package:almagestv2/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class UpdateScreen extends StatelessWidget {
               child: Column(
             children: [
               const SizedBox(height: 10),
-              Text('update', style: Theme.of(context).textTheme.headlineMedium),
+              Text('Update', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 30),
               ChangeNotifierProvider(
                   create: (_) => UpdateFormProvider(), child: _UpdateForm())
@@ -50,12 +51,12 @@ class UpdateScreen extends StatelessWidget {
 }
 
 // ignore: must_be_immutable
-class _UpdateForm extends StatelessWidget with InputValidationMixinUpdate {
+class _UpdateForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
     final updateForm = Provider.of<UpdateFormProvider>(context);
-    const storage = FlutterSecureStorage();
-    updateForm.id = storage.read(key: 'userId') as String;
+    updateForm.id = UserService().readId().toString();
+    print(updateForm.id);
     return Form(
       key: updateForm.formKey,
       child: Column(
@@ -159,7 +160,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixinUpdate {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   child: Text(
-                    updateForm.isLoading ? 'Wait' : 'updated',
+                    updateForm.isLoading ? 'Wait' : 'Confirm changes',
                     style: const TextStyle(color: Colors.white),
                   )))
         ],
@@ -179,18 +180,5 @@ class _UpdateForm extends StatelessWidget with InputValidationMixinUpdate {
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
     );
-  }
-}
-
-mixin InputValidationMixinUpdate {
-  bool isTextValid(texto) => texto.length > 0;
-
-  bool isPasswordValid(password) => password.length > 6;
-
-  bool isEmailValid(email) {
-    String pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = RegExp(pattern);
-    return regExp.hasMatch(email);
   }
 }

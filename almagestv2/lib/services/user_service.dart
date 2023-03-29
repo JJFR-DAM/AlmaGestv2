@@ -22,7 +22,7 @@ class UserService extends ChangeNotifier {
     String password,
     String cpassword,
   ) async {
-    final Map<String, dynamic> registerData = {
+    final Map<String, dynamic> authData = {
       'firstname': firstname,
       'secondname': secondname,
       'email': email,
@@ -38,7 +38,7 @@ class UserService extends ChangeNotifier {
           'Accept': 'application/json',
           "Authorization": "Some token",
         },
-        body: json.encode(registerData));
+        body: json.encode(authData));
 
     final Map<String, dynamic> decoded = json.decode(response.body);
 
@@ -49,8 +49,8 @@ class UserService extends ChangeNotifier {
     } else {}
   }
 
-  Future login(String email, String password) async {
-    final Map<String, dynamic> registerData = {
+  Future<String?> login(String email, String password) async {
+    final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
     };
@@ -63,14 +63,19 @@ class UserService extends ChangeNotifier {
           'Accept': 'application/json',
           "Authorization": "Some token",
         },
-        body: json.encode(registerData));
+        body: json.encode(authData));
 
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     if (decoded['success'] == true) {
       await storage.write(key: 'token', value: decoded['data']['token']);
       await storage.write(key: 'id', value: decoded['data']['id'].toString());
-    } else {}
+      return decoded['data']['type'] +
+          ',' +
+          decoded['data']['actived'].toString();
+    } else {
+      return decoded['message'];
+    }
   }
 
   Future logout() async {
@@ -82,8 +87,16 @@ class UserService extends ChangeNotifier {
     return await storage.read(key: 'token') ?? '';
   }
 
-  Future<String> readId() async {
+  Future<String> readCurrentId() async {
     return await storage.read(key: 'id') ?? '';
+  }
+
+  Future writeId(String id) async {
+    return await storage.write(key: 'userId', value: id);
+  }
+
+  Future<String> readId() async {
+    return await storage.read(key: 'userId') ?? '';
   }
 
   Future<List<UserData>> getUsers() async {

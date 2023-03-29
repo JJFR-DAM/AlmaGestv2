@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -113,17 +113,15 @@ class _LoginForm extends StatelessWidget {
 
                     loginForm.isLoading = true;
 
-                    // validar si el login es correcto
                     final String? data = await userService.login(
                         loginForm.email, loginForm.password);
                     final spliter = data?.split(',');
 
                     if (spliter?[0] == 'a') {
                       Navigator.pushReplacementNamed(context, 'admin');
-                      // ignore: unrelated_type_equality_checks
                     } else if (spliter?[0] == 'u' && spliter?[1] == 0) {
                       customToast('The user hasnt been activated', context);
-                    } else if (spliter?[0] == 'u') {
+                    } else if (spliter?[0] == 'u' && spliter?[1] == 1) {
                       Navigator.pushReplacementNamed(context, 'user');
                     } else {
                       customToast('Email or password incorrect', context);

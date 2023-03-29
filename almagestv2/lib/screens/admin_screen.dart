@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:provider/provider.dart';
@@ -111,8 +110,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     SlidableAction(
                       onPressed: (context) {
                         setState(() {
-                          const storage = FlutterSecureStorage();
-                          storage.write(key: 'userId', value: user.id);
+                          userService.writeId(user.id.toString());
                           Navigator.pushReplacementNamed(context, 'update');
                         });
                       },
@@ -175,8 +173,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     SlidableAction(
                       onPressed: (context) {
                         setState(() {
-                          const storage = FlutterSecureStorage();
-                          storage.write(key: 'userId', value: user.id);
+                          userService.writeId(user.id.toString());
                           Navigator.pushReplacementNamed(context, 'update');
                         });
                       },

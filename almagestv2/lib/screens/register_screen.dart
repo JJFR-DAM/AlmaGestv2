@@ -49,7 +49,7 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
+class _RegisterForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
     final registerForm = Provider.of<RegisterFormProvider>(context);
@@ -201,10 +201,10 @@ class _RegisterForm extends StatelessWidget with InputValidationMixinRegister {
   }
 }
 
-mixin InputValidationMixinRegister {
+mixin InputValidationMixin {
   bool isTextValid(texto) => texto.length > 0;
 
-  bool isPasswordValid(password) => password.length > 6;
+  bool isPasswordValid(password) => password.length >= 6;
 
   bool isEmailValid(email) {
     String pattern =
