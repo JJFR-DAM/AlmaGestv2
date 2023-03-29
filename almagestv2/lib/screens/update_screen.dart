@@ -40,8 +40,10 @@ class UpdateScreen extends StatelessWidget {
                   onPressed: () =>
                       Navigator.pushReplacementNamed(context, 'admin'),
                   style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Colors.white.withOpacity(0.8)),
                       overlayColor: MaterialStateProperty.all(
-                          Colors.indigo.withOpacity(0.1)),
+                          Colors.grey.withOpacity(0.3)),
                       shape: MaterialStateProperty.all(const StadiumBorder())),
                   child: const Text(
                     'Leave without update',
