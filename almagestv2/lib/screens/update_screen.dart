@@ -2,7 +2,6 @@
 
 import 'package:almagestv2/screens/screens.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
@@ -12,6 +11,8 @@ import 'package:almagestv2/widgets/widgets.dart';
 import 'package:almagestv2/ui/input_decorations.dart';
 
 class UpdateScreen extends StatelessWidget {
+  static String userId = '';
+
   const UpdateScreen({Key? key}) : super(key: key);
 
   @override
@@ -58,8 +59,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
     final updateForm = Provider.of<UpdateFormProvider>(context);
-    updateForm.id = UserService().readId().toString();
-    print('El valor del id es: ${updateForm.id}');
+    updateForm.id = UpdateScreen.userId;
     return Form(
       key: updateForm.formKey,
       child: Column(
@@ -125,6 +125,22 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
               }
             },
           ),
+          TextFormField(
+            autocorrect: false,
+            keyboardType: TextInputType.text,
+            decoration: InputDecorations.authInputDecoration(
+                hintText: '',
+                labelText: 'CompanyId',
+                prefixIcon: Icons.business_outlined),
+            onChanged: (value) => updateForm.companyId = value,
+            validator: (companyId) {
+              if (isTextValid(companyId)) {
+                return null;
+              } else {
+                return 'CompanyId field cant be null';
+              }
+            },
+          ),
           const SizedBox(height: 30),
           MaterialButton(
               shape: RoundedRectangleBorder(
@@ -140,19 +156,15 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
                           Provider.of<UserService>(context, listen: false);
 
                       if (!updateForm.isValidForm()) return;
-
                       updateForm.isLoading = true;
-
                       final String? errorMessage = await userService.postUpdate(
                           updateForm.id,
                           updateForm.firstname,
                           updateForm.secondname,
                           updateForm.email,
                           updateForm.password,
-                          updateForm.companyId.toString());
+                          updateForm.companyId);
                       if (errorMessage == null) {
-                        const storage = FlutterSecureStorage();
-                        storage.delete(key: 'userId');
                         Navigator.pushReplacementNamed(context, 'admin');
                       } else {
                         updateForm.isLoading = false;

@@ -87,16 +87,8 @@ class UserService extends ChangeNotifier {
     return await storage.read(key: 'token') ?? '';
   }
 
-  Future<String> readCurrentId() async {
-    return await storage.read(key: 'id') ?? '';
-  }
-
-  Future writeId(String id) async {
-    return await storage.write(key: 'userId', value: id);
-  }
-
   Future<String> readId() async {
-    return await storage.read(key: 'userId') ?? '';
+    return await storage.read(key: 'id') ?? '';
   }
 
   Future<List<UserData>> getUsers() async {
@@ -210,7 +202,7 @@ class UserService extends ChangeNotifier {
       'password': password,
       'company_id': companyId
     };
-    final url = Uri.http(baseURL, '/public/api/user/update/', {'user_id': id});
+    final url = Uri.http(baseURL, '/public/api/user/updated/$id');
     String? token = await readToken();
     isLoading = true;
     notifyListeners();
@@ -221,7 +213,6 @@ class UserService extends ChangeNotifier {
           "Authorization": "Bearer $token",
         },
         body: json.encode(updateData));
-
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     if (response.statusCode == 200) {

@@ -1,3 +1,4 @@
+import 'package:almagestv2/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cool_alert/cool_alert.dart';
@@ -110,7 +111,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     SlidableAction(
                       onPressed: (context) {
                         setState(() {
-                          userService.writeId(user.id.toString());
+                          UpdateScreen.userId = user.id.toString();
                           Navigator.pushReplacementNamed(context, 'update');
                         });
                       },
@@ -173,7 +174,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     SlidableAction(
                       onPressed: (context) {
                         setState(() {
-                          userService.writeId(user.id.toString());
+                          UpdateScreen.userId = user.id.toString();
                           Navigator.pushReplacementNamed(context, 'update');
                         });
                       },
