@@ -31,6 +31,7 @@ class UserData {
   int? id;
   String? firstname;
   String? secondname;
+  int? companyId;
   int? actived;
   String? email;
   String? type;
@@ -43,6 +44,7 @@ class UserData {
       {this.id,
       this.firstname,
       this.secondname,
+      this.companyId,
       this.actived,
       this.email,
       this.type,
@@ -55,6 +57,7 @@ class UserData {
     id = json['id'];
     firstname = json['firstname'];
     secondname = json['secondname'];
+    companyId = json['company_id'];
     actived = json['actived'];
     email = json['email'];
     type = json['type'];
@@ -69,6 +72,7 @@ class UserData {
     data['id'] = id;
     data['firstname'] = firstname;
     data['secondname'] = secondname;
+    data['company_id'] = companyId;
     data['actived'] = actived;
     data['email'] = email;
     data['type'] = type;

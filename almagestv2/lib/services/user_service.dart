@@ -118,9 +118,8 @@ class UserService extends ChangeNotifier {
 
 //Revisar método getUser para optimizar y verle uso.
 
-  getUser() async {
+  Future<UserData> getUser(String id) async {
     String? token = await readToken();
-    String? id = await readId();
 
     final url = Uri.http(baseURL, '/public/api/user/$id');
     isLoading = true;
@@ -133,12 +132,11 @@ class UserService extends ChangeNotifier {
         "Authorization": "Bearer $token",
       },
     );
-    final Map<String, dynamic> decodedResp = json.decode(resp.body);
-    await storage.write(
-        key: 'company_id', value: decodedResp['data']['company_id'].toString());
+    final Map<String, dynamic> decode = json.decode(resp.body);
+    UserData user = UserData.fromJson(decode['data']);
     isLoading = false;
     notifyListeners();
-    return decodedResp['data']['company_id'].toString();
+    return user;
   }
 
   Future postActivate(String id) async {

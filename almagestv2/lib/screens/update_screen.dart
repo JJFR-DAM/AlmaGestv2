@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
-import 'package:almagestv2/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
+import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/services/services.dart';
 import 'package:almagestv2/providers/providers.dart';
 import 'package:almagestv2/widgets/widgets.dart';
@@ -60,6 +60,15 @@ class UpdateScreen extends StatelessWidget {
 class _UpdateForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
+    int position = 1;
+    for (int i = 0; i < users.length; i++) {
+      if (users[i].id.toString() == UpdateScreen.userId) {
+        position = i;
+      }
+    }
+    print(users.length);
+    print(position);
+    final user = users[position];
     final updateForm = Provider.of<UpdateFormProvider>(context);
     updateForm.id = UpdateScreen.userId;
     return Form(
@@ -70,7 +79,10 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             keyboardType: TextInputType.name,
             decoration: InputDecorations.authInputDecoration(
-                hintText: '', labelText: 'Name', prefixIcon: Icons.person),
+              hintText: user.firstname.toString(),
+              labelText: 'Name',
+              prefixIcon: Icons.person,
+            ),
             onChanged: (value) => updateForm.firstname = value,
             validator: (name) {
               if (isTextValid(name)) {
@@ -84,7 +96,10 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             keyboardType: TextInputType.name,
             decoration: InputDecorations.authInputDecoration(
-                hintText: '', labelText: 'Surname', prefixIcon: Icons.person),
+              hintText: user.secondname.toString(),
+              labelText: 'Surname',
+              prefixIcon: Icons.person,
+            ),
             onChanged: (value) => updateForm.secondname = value,
             validator: (surname) {
               if (isTextValid(surname)) {
@@ -98,7 +113,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecorations.authInputDecoration(
-                hintText: 'example@example.com',
+                hintText: user.email.toString(),
                 labelText: 'Email',
                 prefixIcon: Icons.alternate_email_rounded),
             onChanged: (value) => updateForm.email = value,
@@ -116,7 +131,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             keyboardType: TextInputType.text,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '*******',
-                labelText: 'Password',
+                labelText: 'New password',
                 prefixIcon: Icons.lock_outline),
             onChanged: (value) => updateForm.password = value,
             validator: (password) {
@@ -131,7 +146,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             keyboardType: TextInputType.text,
             decoration: InputDecorations.authInputDecoration(
-                hintText: '',
+                hintText: user.companyId.toString(),
                 labelText: 'CompanyId',
                 prefixIcon: Icons.business_outlined),
             onChanged: (value) => updateForm.companyId = value,
