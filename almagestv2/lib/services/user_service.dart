@@ -13,6 +13,8 @@ class UserService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   bool isLoading = true;
   final List<UserData> users = [];
+  final List<PlagueData> plagues = [];
+  final List<OpinionData> opinions = [];
   String user = '';
 
   Future register(
@@ -219,5 +221,53 @@ class UserService extends ChangeNotifier {
       print('error');
       print(decoded.toString());
     }
+  }
+
+  //Sitio temporal para servicios de plagas y de opiniones
+
+  Future getPlagues() async {
+    final url = Uri.http(baseURL, '/public/api/plagues', {});
+    isLoading = true;
+    notifyListeners();
+
+    final response = await http.get(
+      url,
+    );
+
+    final Map<String, dynamic> decoded = json.decode(response.body);
+    var plague = Plagues.fromJson(decoded);
+    for (var i in plague.data!) {
+      plagues.add(i);
+      //Si se independiza a otro archivo de servicio recordar la lista.
+    }
+    isLoading = false;
+    notifyListeners();
+    return plagues;
+  }
+
+  Future getOpinions() async {
+    String? token = await readToken();
+    final url = Uri.http(baseURL, '/public/api/plagues', {});
+    isLoading = true;
+    notifyListeners();
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    final Map<String, dynamic> decoded = json.decode(response.body);
+    var opinion = Opinions.fromJson(decoded);
+    for (var i in opinion.data!) {
+      opinions.add(i);
+      //Si se independiza a otro archivo de servicio recordar la lista.
+    }
+    isLoading = false;
+    notifyListeners();
+    return opinions;
   }
 }

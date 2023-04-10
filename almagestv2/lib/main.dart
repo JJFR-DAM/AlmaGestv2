@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InternetWidget(
-      // ignore: avoid_print
       whenOffline: () => LoadingScreen,
       // ignore: avoid_print
       whenOnline: () => print('Connected to internet'),
@@ -46,6 +45,7 @@ class MyApp extends StatelessWidget {
           'register': (_) => const RegisterScreen(),
           'admin': (_) => const AdminScreen(),
           'update': (_) => const UpdateScreen(),
+          'opinion': (_) => const OpinionScreen(),
         },
         theme: ThemeData.light().copyWith(
             scaffoldBackgroundColor: Colors.grey[300],

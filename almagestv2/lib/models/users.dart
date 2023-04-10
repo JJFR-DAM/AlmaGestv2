@@ -64,7 +64,7 @@ class UserData {
     emailConfirmed = json['email_confirmed'];
     deleted = json['deleted'];
     createdAt = json['created_at'];
-    updatedAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
