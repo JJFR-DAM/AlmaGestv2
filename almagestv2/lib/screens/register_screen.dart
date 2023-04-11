@@ -65,6 +65,8 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '', labelText: 'Name', prefixIcon: Icons.person),
             onChanged: (value) => registerForm.firstname = value,
@@ -79,6 +81,8 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            maxLength: 32,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '', labelText: 'Surname', prefixIcon: Icons.person),
             onChanged: (value) => registerForm.secondname = value,
@@ -93,6 +97,8 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            maxLength: 50,
             decoration: InputDecorations.authInputDecoration(
                 hintText: 'example@example.com',
                 labelText: 'Email',
@@ -110,6 +116,8 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             obscureText: true,
             keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '*******',
                 labelText: 'Password',
@@ -127,9 +135,10 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             obscureText: true,
             keyboardType: TextInputType.text,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '*******',
-                labelText: 'Password',
+                labelText: 'Repeat password',
                 prefixIcon: Icons.lock_outline),
             onChanged: (value) => registerForm.cpassword = value,
             validator: (value) {
@@ -152,7 +161,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
                   ? null
                   : () async {
                       FocusScope.of(context).unfocus();
-                      final userServiec =
+                      final userService =
                           Provider.of<UserService>(context, listen: false);
 
                       if (!registerForm.isValidForm()) return;
@@ -160,7 +169,7 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
                       registerForm.isLoading = true;
 
                       //validar si el login es correcto
-                      final String? errorMessage = await userServiec.register(
+                      final String? errorMessage = await userService.register(
                         registerForm.firstname,
                         registerForm.secondname,
                         registerForm.email,

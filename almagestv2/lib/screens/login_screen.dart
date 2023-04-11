@@ -66,6 +66,8 @@ class _LoginForm extends StatelessWidget {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            maxLength: 50,
             decoration: InputDecorations.authInputDecoration(
                 hintText: 'example@example.com',
                 labelText: 'Email',
@@ -85,7 +87,9 @@ class _LoginForm extends StatelessWidget {
           TextFormField(
             autocorrect: false,
             obscureText: true,
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '*****',
                 labelText: 'Password',
@@ -121,10 +125,11 @@ class _LoginForm extends StatelessWidget {
 
                     if (spliter?[0] == 'a') {
                       Navigator.pushReplacementNamed(context, 'admin');
-                    } else if (spliter?[0] == 'u' && spliter?[1] == 0) {
+                    } else if (spliter?[0] == 'u' && spliter?[1] == '0') {
                       customToast('The user hasnt been activated', context);
-                    } else if (spliter?[0] == 'u' && spliter?[1] == 1) {
-                      Navigator.pushReplacementNamed(context, 'user');
+                      Navigator.pushReplacementNamed(context, 'login');
+                    } else if (spliter?[0] == 'u' && spliter?[1] == '1') {
+                      Navigator.pushReplacementNamed(context, 'opinions');
                     } else {
                       customToast('Email or password incorrect', context);
                       Navigator.pushReplacementNamed(context, 'login');

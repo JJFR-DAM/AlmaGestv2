@@ -66,8 +66,6 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
         position = i;
       }
     }
-    print(users.length);
-    print(position);
     final user = users[position];
     final updateForm = Provider.of<UpdateFormProvider>(context);
     updateForm.id = UpdateScreen.userId;
@@ -78,6 +76,8 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
               hintText: user.firstname.toString(),
               labelText: 'Name',
@@ -95,6 +95,8 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            maxLength: 32,
             decoration: InputDecorations.authInputDecoration(
               hintText: user.secondname.toString(),
               labelText: 'Surname',
@@ -112,6 +114,8 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            maxLength: 50,
             decoration: InputDecorations.authInputDecoration(
                 hintText: user.email.toString(),
                 labelText: 'Email',
@@ -129,6 +133,8 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
             autocorrect: false,
             obscureText: true,
             keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
                 hintText: '*******',
                 labelText: 'New password',
@@ -145,6 +151,8 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            maxLength: 4,
             decoration: InputDecorations.authInputDecoration(
                 hintText: user.companyId.toString(),
                 labelText: 'CompanyId',
@@ -182,6 +190,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
                           updateForm.password,
                           updateForm.companyId);
                       if (errorMessage == null) {
+                        showToast('Updated succesfully');
                         Navigator.pushReplacementNamed(context, 'admin');
                       } else {
                         updateForm.isLoading = false;
