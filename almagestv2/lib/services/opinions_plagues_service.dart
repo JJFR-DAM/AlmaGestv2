@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:almagestv2/services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:almagestv2/services/services.dart';
 import 'package:almagestv2/models/models.dart';
 
 class OpinionsPlaguesService extends ChangeNotifier {
@@ -27,14 +27,13 @@ class OpinionsPlaguesService extends ChangeNotifier {
     var plague = Plagues.fromJson(decoded);
     for (var i in plague.data!) {
       plagues.add(i);
-      //Si se independiza a otro archivo de servicio recordar la lista.
     }
     isLoading = false;
     notifyListeners();
     return plagues;
   }
 
-  Future getOpinions() async {
+  Future<List<OpinionData>> getOpinions() async {
     String? token = await userService.readToken();
     final url = Uri.http(baseURL, '/public/api/opinions', {});
     isLoading = true;
@@ -53,7 +52,6 @@ class OpinionsPlaguesService extends ChangeNotifier {
     var opinion = Opinions.fromJson(decoded);
     for (var i in opinion.data!) {
       opinions.add(i);
-      //Si se independiza a otro archivo de servicio recordar la lista.
     }
     isLoading = false;
     notifyListeners();

@@ -56,19 +56,10 @@ class _AdminScreenState extends State<AdminScreen> {
         ),
         body: RefreshIndicator(
           onRefresh: () async {
-            setState(() {
-              refresh();
-            });
             Navigator.pushReplacementNamed(context, 'admin');
           },
           child: builListView(context, buildUserService(context), usersFinal),
         ));
-  }
-
-  // ignore: unused_element
-  void _showSnackBar(BuildContext context, String message, Color color) {
-    final snackBar = SnackBar(content: Text(message), backgroundColor: color);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   UserService buildUserService(BuildContext context) {

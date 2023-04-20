@@ -1,3 +1,4 @@
+import 'package:almagestv2/Models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,15 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
     final opinionForm = Provider.of<OpinionFormProvider>(context);
-
+    OpinionsPlaguesService opService = OpinionsPlaguesService();
+    opService.getPlagues();
+    opService.getOpinions();
+    List<PlagueData> plaguesList = opService.plagues.cast<PlagueData>();
+    List<OpinionData> opinionsList = opService.opinions.cast<OpinionData>();
+    List<String> plaguesIds = [];
+    for (var i in plaguesList) {
+      plaguesIds.add(i.name.toString());
+    }
     return Form(
       key: opinionForm.formKey,
       child: Column(
@@ -77,8 +86,18 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
             ),
             onChanged: (value) => opinionForm.id = value,
             validator: (number) {
+              bool isRepeated = false;
               if (isTextValid(number)) {
-                return null;
+                for (var i = 0; i < opinionsList.length; i++) {
+                  if (number.toString() == opinionsList[i].id.toString()) {
+                    isRepeated = true;
+                  }
+                }
+                if (isRepeated == true) {
+                  return 'This opinionId already exist';
+                } else {
+                  return null;
+                }
               } else {
                 return 'OpinionId field cant be null or contains characters.';
               }
@@ -123,57 +142,21 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
               }
             },
           ),
-          TextFormField(
-            autocorrect: false,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-            maxLength: 4,
-            decoration: InputDecorations.authInputDecoration(
-                hintText: '',
-                labelText: 'PlagueId',
-                prefixIcon: Icons.key_outlined),
-            onChanged: (value) => opinionForm.plagueId = value,
-            validator: (number) {
-              if (isEmailValid(number)) {
-                return null;
-              } else {
-                return 'PlagueId field cant be null or contains characters.';
-              }
+          DropdownButtonFormField(
+            hint: const Text('Select a Plague'),
+            iconSize: 20,
+            value: 'plaguesList[1].toString()',
+            onChanged: (value) {
+              opinionForm.plagueName = value!;
             },
-          ),
-          TextFormField(
-            autocorrect: false,
-            obscureText: true,
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            maxLength: 24,
-            decoration: InputDecorations.authInputDecoration(
-                hintText: '',
-                labelText: 'PlagueName',
-                prefixIcon: Icons.title_rounded),
-            onChanged: (value) => opinionForm.plagueName = value,
-            validator: (name) {
-              if (isPasswordValid(name)) {
-                return null;
-              } else {
-                return 'PlagueName field cant be null.';
-              }
-            },
-          ),
-          TextFormField(
-            autocorrect: false,
-            keyboardType: TextInputType.number,
-            decoration: InputDecorations.authInputDecoration(
-                hintText: '',
-                labelText: 'NumLikes',
-                prefixIcon: Icons.add_reaction_outlined),
-            onChanged: (value) => opinionForm.numLikes = value,
-            validator: (number) {
-              if (isTextValid(number)) {
-                return null;
-              } else {
-                return 'NumLikes field cant be null.';
-              }
+            items: plaguesIds.map((e) {
+              return DropdownMenuItem(
+                value: e,
+                child: Text(e),
+              );
+            }).toList(),
+            validator: (value) {
+              return (value != null && value != '0') ? null : 'Select a Plague';
             },
           ),
           const SizedBox(height: 30),
@@ -197,7 +180,7 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
                         opinionForm.description,
                         opinionForm.plagueId,
                         opinionForm.plagueName,
-                        opinionForm.numLikes,
+                        '0',
                       );
                       if (errorMessage == 'Opinion created successfully.') {
                         showToast('Created succesfully');
