@@ -60,7 +60,7 @@ class OpinionsPlaguesService extends ChangeNotifier {
 
   Future postOpinion(String id, String headline, String description,
       String plagueId, String plagueName, String numLikes) async {
-    final Map<String, dynamic> updateData = {
+    final Map<String, dynamic> createData = {
       'id': id,
       'headline': headline,
       'description': description,
@@ -68,17 +68,18 @@ class OpinionsPlaguesService extends ChangeNotifier {
       'plague_name': plagueName,
       'num_likes': numLikes
     };
-    final url = Uri.http(baseURL, '/public/api/user/opinions');
+    final url = Uri.http(baseURL, '/public/api/opinions', createData);
     String? token = await userService.readToken();
     isLoading = true;
     notifyListeners();
-    final response = await http.post(url,
-        headers: {
-          'Content-type': 'application/json',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $token",
-        },
-        body: json.encode(updateData));
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     return decoded['message'];

@@ -124,14 +124,20 @@ class _LoginForm extends StatelessWidget {
                     final spliter = data?.split(',');
 
                     if (spliter?[0] == 'a') {
+                      customToast(
+                          'Logged as admin.', context, Colors.greenAccent);
                       Navigator.pushReplacementNamed(context, 'admin');
                     } else if (spliter?[0] == 'u' && spliter?[1] == '0') {
-                      customToast('The user hasnt been activated', context);
+                      customToast('The user hasnt been activated.', context,
+                          Colors.redAccent);
                       Navigator.pushReplacementNamed(context, 'login');
                     } else if (spliter?[0] == 'u' && spliter?[1] == '1') {
+                      customToast(
+                          'Logged as user.', context, Colors.greenAccent);
                       Navigator.pushReplacementNamed(context, 'opinions');
                     } else {
-                      customToast('Email or password incorrect', context);
+                      customToast('Email or password incorrect.', context,
+                          Colors.redAccent);
                       Navigator.pushReplacementNamed(context, 'login');
                     }
                   },
@@ -148,17 +154,18 @@ class _LoginForm extends StatelessWidget {
     );
   }
 
-  void customToast(String s, BuildContext context) {
+  void customToast(String s, BuildContext context, Color c) {
     showToast(
       s,
       context: context,
       animation: StyledToastAnimation.scale,
       reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
+      position: StyledToastPosition.bottom,
       animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
+      backgroundColor: c,
     );
   }
 }

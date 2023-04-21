@@ -190,7 +190,7 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
                           updateForm.password,
                           updateForm.companyId);
                       if (errorMessage == null) {
-                        showToast('Updated succesfully');
+                        customToast('Updated succesfully', context);
                         Navigator.pushReplacementNamed(context, 'admin');
                       } else {
                         updateForm.isLoading = false;
@@ -215,9 +215,9 @@ class _UpdateForm extends StatelessWidget with InputValidationMixin {
       context: context,
       animation: StyledToastAnimation.scale,
       reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
+      position: StyledToastPosition.bottom,
       animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
     );

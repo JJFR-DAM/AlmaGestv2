@@ -2,6 +2,7 @@ import 'package:almagestv2/screens/screens.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:like_button/like_button.dart';
 
 import 'package:almagestv2/models/models.dart';
@@ -21,10 +22,20 @@ class OpinionScreen extends StatefulWidget {
 
 class _OpinionScreenState extends State<OpinionScreen> {
   Future refresh() async {
-    setState(() => opinionsList.clear());
-    var opService = Provider.of<OpinionsPlaguesService>(context, listen: false);
+    final opService =
+        Provider.of<OpinionsPlaguesService>(context, listen: false);
+
+    setState(() {
+      opService.opinions.clear();
+      opService.plagues.clear();
+      opinionsList.clear();
+      OpinionScreen.plagues.clear();
+    });
     await opService.getOpinions();
     await opService.getPlagues();
+    for (var i = 0; i < opService.opinions.length; i++) {
+      opinionsList.add(opService.opinions.cast<OpinionData>()[i]);
+    }
   }
 
   @override
@@ -38,7 +49,6 @@ class _OpinionScreenState extends State<OpinionScreen> {
     final opService =
         Provider.of<OpinionsPlaguesService>(context, listen: false);
     final userService = Provider.of<UserService>(context, listen: false);
-    opinionsList = opService.opinions.cast<OpinionData>();
     OpinionScreen.plagues = opService.plagues.cast<PlagueData>();
 
     return Scaffold(
@@ -52,6 +62,45 @@ class _OpinionScreenState extends State<OpinionScreen> {
             Navigator.pushReplacementNamed(context, 'login');
           },
         ),
+        actions: [
+          SizedBox(
+            width: 150,
+            child: DropdownButtonFormField(
+                hint: const Text(
+                  'Select a Plague',
+                  style: TextStyle(color: Colors.white),
+                ),
+                iconSize: 20,
+                iconEnabledColor: Colors.white,
+                iconDisabledColor: Colors.white,
+                focusColor: Colors.deepPurpleAccent,
+                dropdownColor: Colors.deepPurple,
+                onChanged: (value) {
+                  setState(() {
+                    opinionsList.clear();
+                    for (var i = 0; i < opService.opinions.length; i++) {
+                      opinionsList
+                          .add(opService.opinions.cast<OpinionData>()[i]);
+                    }
+                    opinionsList.removeWhere((element) =>
+                        value?.name.toString() !=
+                        element.plagueName.toString());
+                  });
+                },
+                items: OpinionScreen.plagues.map((e) {
+                  return DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e.name.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  );
+                }).toList(),
+                validator: (value) {
+                  return (value!.name != null) ? null : 'Select a Plague';
+                }),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -128,6 +177,7 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                 onConfirmBtnTap: () {
                                   opService
                                       .deleteOpinion(opinion.id.toString());
+                                  customToast('Deleted succesfully', context);
                                   Navigator.pushReplacementNamed(
                                       context, 'opinions');
                                 },
@@ -194,4 +244,19 @@ class _OpinionScreenState extends State<OpinionScreen> {
             return const Divider();
           },
           itemCount: opinions.length);
+
+  void customToast(String s, BuildContext context) {
+    showToast(
+      s,
+      context: context,
+      animation: StyledToastAnimation.scale,
+      reverseAnimation: StyledToastAnimation.fade,
+      position: StyledToastPosition.bottom,
+      animDuration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
+      curve: Curves.elasticOut,
+      reverseCurve: Curves.linear,
+      backgroundColor: Colors.greenAccent,
+    );
+  }
 }

@@ -2,6 +2,7 @@ import 'package:almagestv2/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 
 import 'package:almagestv2/Models/models.dart';
@@ -84,6 +85,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   children: [
                     SlidableAction(
                       onPressed: (context) {
+                        customToast('Activated succesfully', context);
                         setState(() {
                           userService.postActivate(user.id.toString());
                           users[index].actived = 1;
@@ -122,6 +124,7 @@ class _AdminScreenState extends State<AdminScreen> {
                           confirmBtnColor: Colors.purple,
                           confirmBtnText: 'Delete',
                           onConfirmBtnTap: () {
+                            customToast('Deleted succesfully', context);
                             setState(() {
                               userService.postDelete(user.id.toString());
                               refresh();
@@ -147,6 +150,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   children: [
                     SlidableAction(
                       onPressed: (context) {
+                        customToast('Deactivated succesfully', context);
                         setState(() {
                           userService.postDeactivate(user.id.toString());
                           users[index].actived = 0;
@@ -185,6 +189,7 @@ class _AdminScreenState extends State<AdminScreen> {
                           confirmBtnColor: Colors.purple,
                           confirmBtnText: 'Delete',
                           onConfirmBtnTap: () {
+                            customToast('Deleted succesfully', context);
                             setState(() {
                               userService.postDelete(user.id.toString());
                               users.removeAt(index);
@@ -220,4 +225,19 @@ class _AdminScreenState extends State<AdminScreen> {
             backgroundImage: NetworkImage(
                 'https://cdn-icons-png.flaticon.com/512/511/511649.png')),
       );
+
+  void customToast(String s, BuildContext context) {
+    showToast(
+      s,
+      context: context,
+      animation: StyledToastAnimation.scale,
+      reverseAnimation: StyledToastAnimation.fade,
+      position: StyledToastPosition.bottom,
+      animDuration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
+      curve: Curves.elasticOut,
+      reverseCurve: Curves.linear,
+      backgroundColor: Colors.greenAccent,
+    );
+  }
 }

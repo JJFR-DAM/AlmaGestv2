@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:almagestv2/Models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -64,45 +66,12 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
     OpinionsPlaguesService opService = OpinionsPlaguesService();
     opService.getPlagues();
     opService.getOpinions();
-    List<PlagueData> plaguesList = opService.plagues.cast<PlagueData>();
+    List<PlagueData> plaguesList = OpinionScreen.plagues;
     List<OpinionData> opinionsList = opService.opinions.cast<OpinionData>();
-    List<String> plaguesIds = [];
-    for (var i in plaguesList) {
-      plaguesIds.add(i.name.toString());
-    }
     return Form(
       key: opinionForm.formKey,
       child: Column(
         children: [
-          TextFormField(
-            autocorrect: false,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-            maxLength: 4,
-            decoration: InputDecorations.authInputDecoration(
-              hintText: '',
-              labelText: 'OpinionId',
-              prefixIcon: Icons.key_outlined,
-            ),
-            onChanged: (value) => opinionForm.id = value,
-            validator: (number) {
-              bool isRepeated = false;
-              if (isTextValid(number)) {
-                for (var i = 0; i < opinionsList.length; i++) {
-                  if (number.toString() == opinionsList[i].id.toString()) {
-                    isRepeated = true;
-                  }
-                }
-                if (isRepeated == true) {
-                  return 'This opinionId already exist';
-                } else {
-                  return null;
-                }
-              } else {
-                return 'OpinionId field cant be null or contains characters.';
-              }
-            },
-          ),
           TextFormField(
             autocorrect: false,
             keyboardType: TextInputType.text,
@@ -145,18 +114,21 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
           DropdownButtonFormField(
             hint: const Text('Select a Plague'),
             iconSize: 20,
-            value: 'plaguesList[1].toString()',
+            iconEnabledColor: Colors.deepPurpleAccent,
+            iconDisabledColor: Colors.deepPurpleAccent,
+            focusColor: Colors.deepPurpleAccent,
             onChanged: (value) {
-              opinionForm.plagueName = value!;
+              opinionForm.plagueId = value!.id.toString();
+              opinionForm.plagueName = value.name.toString();
             },
-            items: plaguesIds.map((e) {
+            items: plaguesList.map((e) {
               return DropdownMenuItem(
                 value: e,
-                child: Text(e),
+                child: Text(e.name.toString()),
               );
             }).toList(),
             validator: (value) {
-              return (value != null && value != '0') ? null : 'Select a Plague';
+              return (value!.name != null) ? null : 'Select a Plague';
             },
           ),
           const SizedBox(height: 30),
@@ -183,8 +155,7 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
                         '0',
                       );
                       if (errorMessage == 'Opinion created successfully.') {
-                        showToast('Created succesfully');
-                        // ignore: use_build_context_synchronously
+                        customToast('Created succesfully', context);
                         Navigator.pushReplacementNamed(context, 'opinions');
                       } else {
                         opinionForm.isLoading = false;
@@ -210,11 +181,12 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
       context: context,
       animation: StyledToastAnimation.scale,
       reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
+      position: StyledToastPosition.bottom,
       animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
+      backgroundColor: Colors.greenAccent,
     );
   }
 }

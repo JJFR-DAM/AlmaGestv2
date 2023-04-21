@@ -177,10 +177,10 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
                         registerForm.cpassword,
                       );
                       if (errorMessage == null) {
+                        customToast(
+                            'User has been registered succesfully', context);
                         Navigator.pushReplacementNamed(context, 'login');
                       } else {
-                        //mostrar error en pantalla
-                        // customToast('The email is already registered', context);
                         registerForm.isLoading = false;
                         print(errorMessage);
                       }
@@ -203,11 +203,12 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
       context: context,
       animation: StyledToastAnimation.scale,
       reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
+      position: StyledToastPosition.bottom,
       animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
+      backgroundColor: Colors.greenAccent,
     );
   }
 }
