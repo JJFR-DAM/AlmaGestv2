@@ -129,7 +129,7 @@ class _LoginForm extends StatelessWidget {
                       Navigator.pushReplacementNamed(context, 'admin');
                     } else if (spliter?[0] == 'u' && spliter?[1] == '0') {
                       customToast('The user hasnt been activated.', context,
-                          Colors.redAccent);
+                          Colors.red);
                       Navigator.pushReplacementNamed(context, 'login');
                     } else if (spliter?[0] == 'u' && spliter?[1] == '1') {
                       customToast(
