@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, unused_local_variable
 
 import 'dart:convert';
-import 'package:almagestv2/screens/screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,6 +10,7 @@ import 'package:almagestv2/models/models.dart';
 class UserService extends ChangeNotifier {
   final String baseURL = 'semillero.allsites.es';
   final storage = const FlutterSecureStorage();
+  static String userId = '';
   bool isLoading = true;
   final List<UserData> users = [];
   String user = '';
@@ -68,6 +68,7 @@ class UserService extends ChangeNotifier {
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     if (decoded['success'] == true) {
+      UserService.userId = decoded['data']['id'].toString();
       await storage.write(key: 'token', value: decoded['data']['token']);
       await storage.write(key: 'id', value: decoded['data']['id'].toString());
       return decoded['data']['type'] +

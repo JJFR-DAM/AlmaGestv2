@@ -2,7 +2,6 @@ import 'package:almagestv2/screens/screens.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:like_button/like_button.dart';
 
@@ -11,7 +10,6 @@ import 'package:almagestv2/services/services.dart';
 import 'package:provider/provider.dart';
 
 List<OpinionData> opinionsList = [];
-FlutterSecureStorage storage = const FlutterSecureStorage();
 
 class OpinionScreen extends StatefulWidget {
   static List<PlagueData> plagues = [];
@@ -226,13 +224,16 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                   dotSecondaryColor:
                                       Color.fromARGB(255, 217, 0, 255),
                                 ),
+                                //Cambiar a un botón normal y hacer la funcionalidad.
                                 onTap: (isLiked) async {
-                                  setState(() {
-                                    opService.postLike(
-                                        storage.read(key: 'id').toString(),
-                                        opinion.id.toString());
-                                    isLiked = true;
-                                  });
+                                  if (isLiked == false) {
+                                    setState(() {
+                                      opService.postLike(opinion.id.toString());
+                                      isLiked = true;
+                                    });
+                                  } else {
+                                    isLiked = false;
+                                  }
                                   return isLiked;
                                 },
                                 likeBuilder: (bool isLiked) {
@@ -249,6 +250,7 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                   var color = isLiked
                                       ? Colors.deepPurpleAccent
                                       : Colors.grey;
+
                                   Widget result;
                                   if (count == 0) {
                                     result = Text(

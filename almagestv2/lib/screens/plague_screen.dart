@@ -77,7 +77,7 @@ class _PlagueScreenState extends State<PlagueScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          Navigator.pushReplacementNamed(context, 'opinions');
+          Navigator.pushReplacementNamed(context, 'plagues');
         },
         child: builListView(
             context, buildOpinionsPlaguesService(context), plaguesList),
@@ -93,41 +93,45 @@ class _PlagueScreenState extends State<PlagueScreen> {
   Widget builListView(BuildContext context, OpinionsPlaguesService opService,
           List<PlagueData> plagues) =>
       ListView.separated(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(50),
           itemBuilder: (context, index) {
             final PlagueData plague = plagues[index];
-            return SizedBox(
-              height: 400,
-              child: Card(
-                elevation: 25,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              plague.name.toString(),
-                              style: const TextStyle(fontSize: 30),
-                              textAlign: TextAlign.left,
-                            ),
-                          ]),
-                      const Divider(color: Colors.black),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            plague.img.toString(),
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                        ],
-                      ),
-                    ]),
+            return Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              elevation: 50,
+              shadowColor: Colors.deepPurple.withOpacity(0.5),
+              child: Column(
+                children: [
+                  Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: FadeInImage(
+                      image: NetworkImage(plague.img.toString()),
+                      placeholder: const AssetImage('assets/jar-loading.gif'),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  Container(
+                    alignment: AlignmentDirectional.center,
+                    padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    child: Text(
+                      plague.name.toString(),
+                      style: const TextStyle(fontSize: 20),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
               ),
             );
           },
           separatorBuilder: (context, index) {
-            return const Divider();
+            return Divider(
+              height: 0,
+              color: Colors.deepPurple.withOpacity(0),
+            );
           },
           itemCount: plagues.length);
 

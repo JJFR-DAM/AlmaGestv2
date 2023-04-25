@@ -104,9 +104,9 @@ class OpinionsPlaguesService extends ChangeNotifier {
     return decoded['message'];
   }
 
-  Future postLike(String userId, String opinionId) async {
+  Future postLike(String opinionId) async {
     final Map<String, dynamic> likeData = {
-      'user_id': userId,
+      'user_id': UserService.userId,
       'opinion_id': opinionId,
     };
     final url = Uri.http(baseURL, '/public/api/like', likeData);
@@ -124,7 +124,6 @@ class OpinionsPlaguesService extends ChangeNotifier {
     final Map<String, dynamic> decoded = json.decode(response.body);
 
     //Necesario utilizar el data para registrar quién da Like.
-    print(decoded['message']);
     return decoded['message'];
   }
 }
