@@ -2,6 +2,7 @@ import 'package:almagestv2/screens/screens.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:like_button/like_button.dart';
 
@@ -10,9 +11,11 @@ import 'package:almagestv2/services/services.dart';
 import 'package:provider/provider.dart';
 
 List<OpinionData> opinionsList = [];
+FlutterSecureStorage storage = const FlutterSecureStorage();
 
 class OpinionScreen extends StatefulWidget {
   static List<PlagueData> plagues = [];
+  static int selectedItem = 0;
 
   const OpinionScreen({Key? key}) : super(key: key);
 
@@ -42,6 +45,15 @@ class _OpinionScreenState extends State<OpinionScreen> {
   void initState() {
     super.initState();
     refresh();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      OpinionScreen.selectedItem = index;
+    });
+    if (OpinionScreen.selectedItem == 1) {
+      Navigator.pushReplacementNamed(context, 'plagues');
+    }
   }
 
   @override
@@ -101,6 +113,17 @@ class _OpinionScreenState extends State<OpinionScreen> {
                 }),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.list_bullet), label: 'Opinions'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.bug_report_outlined), label: 'Plagues'),
+        ],
+        currentIndex: OpinionScreen.selectedItem,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -193,6 +216,7 @@ class _OpinionScreenState extends State<OpinionScreen> {
                             children: [
                               LikeButton(
                                 size: 30,
+                                likeCount: opinion.numLikes?.toInt(),
                                 circleColor: const CircleColor(
                                     start: Color.fromARGB(255, 217, 0, 255),
                                     end: Color.fromARGB(255, 217, 0, 255)),
@@ -202,6 +226,15 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                   dotSecondaryColor:
                                       Color.fromARGB(255, 217, 0, 255),
                                 ),
+                                onTap: (isLiked) async {
+                                  setState(() {
+                                    opService.postLike(
+                                        storage.read(key: 'id').toString(),
+                                        opinion.id.toString());
+                                    isLiked = true;
+                                  });
+                                  return isLiked;
+                                },
                                 likeBuilder: (bool isLiked) {
                                   return Icon(
                                     CupertinoIcons.heart_fill,
@@ -211,7 +244,6 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                     size: 30,
                                   );
                                 },
-                                likeCount: opinion.numLikes?.toInt(),
                                 countBuilder:
                                     (int? count, bool isLiked, String text) {
                                   var color = isLiked

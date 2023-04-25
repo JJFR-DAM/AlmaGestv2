@@ -103,4 +103,28 @@ class OpinionsPlaguesService extends ChangeNotifier {
     final Map<String, dynamic> decoded = json.decode(response.body);
     return decoded['message'];
   }
+
+  Future postLike(String userId, String opinionId) async {
+    final Map<String, dynamic> likeData = {
+      'user_id': userId,
+      'opinion_id': opinionId,
+    };
+    final url = Uri.http(baseURL, '/public/api/like', likeData);
+    String? token = await userService.readToken();
+    isLoading = true;
+    notifyListeners();
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
+    final Map<String, dynamic> decoded = json.decode(response.body);
+
+    //Necesario utilizar el data para registrar quién da Like.
+    print(decoded['message']);
+    return decoded['message'];
+  }
 }

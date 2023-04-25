@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
           'admin': (_) => const AdminScreen(),
           'update': (_) => const UpdateScreen(),
           'opinions': (_) => const OpinionScreen(),
+          'plagues': (_) => const PlagueScreen(),
         },
         theme: ThemeData.light().copyWith(
             scaffoldBackgroundColor: Colors.grey[300],

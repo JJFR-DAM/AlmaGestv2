@@ -67,7 +67,6 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
     opService.getPlagues();
     opService.getOpinions();
     List<PlagueData> plaguesList = OpinionScreen.plagues;
-    List<OpinionData> opinionsList = opService.opinions.cast<OpinionData>();
     return Form(
       key: opinionForm.formKey,
       child: Column(

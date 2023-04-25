@@ -1,16 +1,16 @@
-class Plagues {
+class Likes {
   bool? success;
-  List<PlagueData>? data;
+  List<LikeData>? data;
   String? message;
 
-  Plagues({this.success, this.data, this.message});
+  Likes({this.success, this.data, this.message});
 
-  Plagues.fromJson(Map<String, dynamic> json) {
+  Likes.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <PlagueData>[];
+      data = <LikeData>[];
       json['data'].forEach((v) {
-        data!.add(PlagueData.fromJson(v));
+        data!.add(LikeData.fromJson(v));
       });
     }
     message = json['message'];
@@ -27,25 +27,25 @@ class Plagues {
   }
 }
 
-class PlagueData {
+class LikeData {
   int? id;
-  String? name;
-  String? img;
+  String? opinionId;
+  String? userId;
   String? createdAt;
   String? updatedAt;
 
-  PlagueData({
+  LikeData({
     this.id,
-    this.name,
-    this.img,
+    this.opinionId,
+    this.userId,
     this.createdAt,
     this.updatedAt,
   });
 
-  PlagueData.fromJson(Map<String, dynamic> json) {
+  LikeData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
-    img = json['img'];
+    opinionId = json['opinion_id'];
+    userId = json['user_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -53,8 +53,8 @@ class PlagueData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['name'] = name;
-    data['img'] = img;
+    data['opinion_id'] = opinionId;
+    data['user_id'] = userId;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     return data;
