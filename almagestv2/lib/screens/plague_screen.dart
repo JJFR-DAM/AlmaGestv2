@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/services/services.dart';
 import 'package:almagestv2/models/models.dart';
+import 'package:almagestv2/search/search_delegate.dart';
 
 List<PlagueData> plaguesList = [];
+List<PlagueData> filteredPlaguesList = [];
 
 class PlagueScreen extends StatefulWidget {
   const PlagueScreen({Key? key}) : super(key: key);
@@ -24,10 +26,14 @@ class _PlagueScreenState extends State<PlagueScreen> {
       opService.opinions.clear();
       opService.plagues.clear();
       plaguesList.clear();
+      filteredPlaguesList.clear();
     });
     await opService.getOpinions();
     await opService.getPlagues();
-    plaguesList = opService.plagues.cast<PlagueData>();
+    for (var i in opService.plagues.cast<PlagueData>()) {
+      plaguesList.add(i);
+      filteredPlaguesList.add(i);
+    }
   }
 
   @override
@@ -52,6 +58,7 @@ class _PlagueScreenState extends State<PlagueScreen> {
     final userService = Provider.of<UserService>(context, listen: false);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Plagues'),
         centerTitle: true,
@@ -62,7 +69,16 @@ class _PlagueScreenState extends State<PlagueScreen> {
             Navigator.pushReplacementNamed(context, 'login');
           },
         ),
-        actions: const [],
+        actions: [
+          SizedBox(
+            width: 150,
+            child: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () => showSearch(
+                  context: context, delegate: PlagueSearchDelegate()),
+            ),
+          )
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -72,7 +88,7 @@ class _PlagueScreenState extends State<PlagueScreen> {
               icon: Icon(Icons.bug_report_outlined), label: 'Plagues'),
         ],
         currentIndex: OpinionScreen.selectedItem,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.deepPurple,
         onTap: _onItemTapped,
       ),
       body: RefreshIndicator(

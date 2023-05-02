@@ -35,7 +35,9 @@ class _OpinionScreenState extends State<OpinionScreen> {
     await opService.getOpinions();
     await opService.getPlagues();
     for (var i = 0; i < opService.opinions.length; i++) {
-      opinionsList.add(opService.opinions.cast<OpinionData>()[i]);
+      if (opService.opinions.cast<OpinionData>()[i].deleted == 0) {
+        opinionsList.add(opService.opinions.cast<OpinionData>()[i]);
+      }
     }
   }
 
@@ -120,7 +122,7 @@ class _OpinionScreenState extends State<OpinionScreen> {
               icon: Icon(Icons.bug_report_outlined), label: 'Plagues'),
         ],
         currentIndex: OpinionScreen.selectedItem,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.deepPurple,
         onTap: _onItemTapped,
       ),
       body: RefreshIndicator(
@@ -143,6 +145,8 @@ class _OpinionScreenState extends State<OpinionScreen> {
     final opService = Provider.of<OpinionsPlaguesService>(context);
     return opService;
   }
+
+//Controlar si no hay opiniones del tipo que se busca.
 
   Widget builListView(BuildContext context, OpinionsPlaguesService opService,
           List<OpinionData> opinions) =>
@@ -167,12 +171,27 @@ class _OpinionScreenState extends State<OpinionScreen> {
                             ),
                           ]),
                       const Divider(color: Colors.black),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      Column(
                         children: [
-                          Text(
-                            opinion.createdAt.toString(),
-                            style: const TextStyle(fontSize: 15),
+                          const Text(
+                            'Created at:',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          const Divider(
+                            color: Colors.white,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                'Time: ${opinion.createdAt.toString().split('T')[1].substring(0, 8)}',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                              Text(
+                                'Date: ${opinion.createdAt.toString().split('T')[0]}',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -184,6 +203,10 @@ class _OpinionScreenState extends State<OpinionScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           MaterialButton(
+                            color: Colors.red,
+                            highlightColor: Colors.red,
+                            focusColor: Colors.red[800],
+                            splashColor: Colors.red[800],
                             minWidth: 100.0,
                             height: 30.0,
                             onPressed: () {
@@ -206,66 +229,62 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                 cancelBtnText: 'Cancel',
                               );
                             },
-                            color: Colors.red,
                             child: const Text('Delete',
                                 style: TextStyle(color: Colors.white)),
                           ),
                           Column(
                             children: [
-                              LikeButton(
-                                size: 30,
-                                likeCount: opinion.numLikes?.toInt(),
-                                circleColor: const CircleColor(
-                                    start: Color.fromARGB(255, 217, 0, 255),
-                                    end: Color.fromARGB(255, 217, 0, 255)),
-                                bubblesColor: const BubblesColor(
-                                  dotPrimaryColor:
-                                      Color.fromARGB(255, 217, 0, 255),
-                                  dotSecondaryColor:
-                                      Color.fromARGB(255, 217, 0, 255),
-                                ),
-                                //Cambiar a un botón normal y hacer la funcionalidad.
-                                onTap: (isLiked) async {
-                                  if (isLiked == false) {
-                                    setState(() {
-                                      opService.postLike(opinion.id.toString());
-                                      isLiked = true;
-                                    });
-                                  } else {
-                                    isLiked = false;
-                                  }
-                                  return isLiked;
-                                },
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    CupertinoIcons.heart_fill,
-                                    color: isLiked
-                                        ? Colors.deepPurpleAccent
-                                        : Colors.grey,
-                                    size: 30,
-                                  );
-                                },
-                                countBuilder:
-                                    (int? count, bool isLiked, String text) {
-                                  var color = isLiked
-                                      ? Colors.deepPurpleAccent
-                                      : Colors.grey;
-
-                                  Widget result;
-                                  if (count == 0) {
-                                    result = Text(
-                                      "",
-                                      style: TextStyle(color: color),
-                                    );
-                                  } else {
-                                    result = Text(
-                                      text,
-                                      style: TextStyle(color: color),
-                                    );
-                                  }
-                                  return result;
-                                },
-                              ),
+                              Row(
+                                children: [
+                                  MaterialButton(
+                                    splashColor: Colors.purpleAccent,
+                                    onPressed: () {
+                                      setState(() {
+                                        opService
+                                            .postLike(opinion.id.toString());
+                                        Navigator.pushReplacementNamed(
+                                            context, 'opinions');
+                                      });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.heart_solid,
+                                          color: Colors.deepPurple,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          opinion.numLikes.toString(),
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.deepPurple),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                  /*
+                                  IconButton(
+                                    color: Colors.deepPurple,
+                                    splashColor: Colors.deepPurple,
+                                    hoverColor: Colors.purple,
+                                    highlightColor: Colors.purple,
+                                    onPressed: () {
+                                      setState(() {
+                                        opService
+                                            .postLike(opinion.id.toString());
+                                        Navigator.pushReplacementNamed(
+                                            context, 'opinions');
+                                      });
+                                    },
+                                    icon:
+                                        const Icon(CupertinoIcons.heart_solid),
+                                  ),
+                                  Text(
+                                    opinion.numLikes.toString(),
+                                    style: const TextStyle(fontSize: 20),
+                                  ),*/
+                                ],
+                              )
                             ],
                           ),
                         ],

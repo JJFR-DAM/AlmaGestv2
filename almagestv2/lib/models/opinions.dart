@@ -34,6 +34,7 @@ class OpinionData {
   int? plagueId;
   String? plagueName;
   int? numLikes;
+  int? deleted;
   String? createdAt;
   String? updatedAt;
 
@@ -44,6 +45,7 @@ class OpinionData {
       this.plagueId,
       this.plagueName,
       this.numLikes,
+      this.deleted,
       this.createdAt,
       this.updatedAt});
 
@@ -54,6 +56,7 @@ class OpinionData {
     plagueId = json['plague_id'];
     plagueName = json['plague_name'];
     numLikes = json['num_likes'];
+    deleted = json['deleted'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -66,6 +69,7 @@ class OpinionData {
     data['company_id'] = plagueId;
     data['plagueName'] = plagueName;
     data['num_likes'] = numLikes;
+    data['deleted'] = deleted;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     return data;
