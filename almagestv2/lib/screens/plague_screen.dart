@@ -6,10 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/services/services.dart';
 import 'package:almagestv2/models/models.dart';
-import 'package:almagestv2/search/search_delegate.dart';
 
 List<PlagueData> plaguesList = [];
-List<PlagueData> filteredPlaguesList = [];
 
 class PlagueScreen extends StatefulWidget {
   const PlagueScreen({Key? key}) : super(key: key);
@@ -26,14 +24,13 @@ class _PlagueScreenState extends State<PlagueScreen> {
       opService.opinions.clear();
       opService.plagues.clear();
       plaguesList.clear();
-      filteredPlaguesList.clear();
     });
     await opService.getOpinions();
     await opService.getPlagues();
     for (var i in opService.plagues.cast<PlagueData>()) {
       plaguesList.add(i);
-      filteredPlaguesList.add(i);
     }
+    plaguesList.sort((a, b) => a.name.toString().compareTo(b.name.toString()));
   }
 
   @override
@@ -72,10 +69,20 @@ class _PlagueScreenState extends State<PlagueScreen> {
         actions: [
           SizedBox(
             width: 150,
-            child: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () => showSearch(
-                  context: context, delegate: PlagueSearchDelegate()),
+            child: TextField(
+              onChanged: (value) => setState(() {
+                plaguesList.clear();
+                for (var i in opService.plagues.cast<PlagueData>()) {
+                  if (i.name
+                      .toString()
+                      .toLowerCase()
+                      .contains(value.toLowerCase())) {
+                    plaguesList.add(i);
+                  }
+                  plaguesList.sort(
+                      (a, b) => a.name.toString().compareTo(b.name.toString()));
+                }
+              }),
             ),
           )
         ],
@@ -92,6 +99,7 @@ class _PlagueScreenState extends State<PlagueScreen> {
         onTap: _onItemTapped,
       ),
       body: RefreshIndicator(
+        color: Colors.deepPurple,
         onRefresh: () async {
           Navigator.pushReplacementNamed(context, 'plagues');
         },

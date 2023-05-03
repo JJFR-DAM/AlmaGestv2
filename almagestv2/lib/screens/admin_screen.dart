@@ -42,6 +42,8 @@ class _AdminScreenState extends State<AdminScreen> {
         usersFinal.add(users[i]);
       }
     }
+    usersFinal.sort(
+        (a, b) => a.firstname.toString().compareTo(b.firstname.toString()));
 
     return Scaffold(
         appBar: AppBar(

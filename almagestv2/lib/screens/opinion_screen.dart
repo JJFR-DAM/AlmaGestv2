@@ -3,7 +3,6 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:like_button/like_button.dart';
 
 import 'package:almagestv2/models/models.dart';
 import 'package:almagestv2/services/services.dart';
@@ -34,11 +33,13 @@ class _OpinionScreenState extends State<OpinionScreen> {
     });
     await opService.getOpinions();
     await opService.getPlagues();
-    for (var i = 0; i < opService.opinions.length; i++) {
-      if (opService.opinions.cast<OpinionData>()[i].deleted == 0) {
-        opinionsList.add(opService.opinions.cast<OpinionData>()[i]);
+    for (var i in opService.opinions.cast<OpinionData>()) {
+      if (i.deleted == 0) {
+        opinionsList.add(i);
       }
     }
+    opinionsList
+        .sort((a, b) => a.headline.toString().compareTo(b.headline.toString()));
   }
 
   @override
@@ -87,18 +88,19 @@ class _OpinionScreenState extends State<OpinionScreen> {
                 iconDisabledColor: Colors.white,
                 focusColor: Colors.deepPurpleAccent,
                 dropdownColor: Colors.deepPurple,
-                onChanged: (value) {
-                  setState(() {
-                    opinionsList.clear();
-                    for (var i = 0; i < opService.opinions.length; i++) {
-                      opinionsList
-                          .add(opService.opinions.cast<OpinionData>()[i]);
-                    }
-                    opinionsList.removeWhere((element) =>
-                        value?.name.toString() !=
-                        element.plagueName.toString());
-                  });
-                },
+                onChanged: (value) => setState(() {
+                      opinionsList.clear();
+                      for (var i in opService.opinions.cast<OpinionData>()) {
+                        if (i.deleted == 0) {
+                          if (i.plagueName
+                              .toString()
+                              .toLowerCase()
+                              .contains(value!.name.toString().toLowerCase())) {
+                            opinionsList.add(i);
+                          }
+                        }
+                      }
+                    }),
                 items: OpinionScreen.plagues.map((e) {
                   return DropdownMenuItem(
                     value: e,
@@ -126,6 +128,7 @@ class _OpinionScreenState extends State<OpinionScreen> {
         onTap: _onItemTapped,
       ),
       body: RefreshIndicator(
+        color: Colors.deepPurple,
         onRefresh: () async {
           Navigator.pushReplacementNamed(context, 'opinions');
         },
@@ -145,8 +148,6 @@ class _OpinionScreenState extends State<OpinionScreen> {
     final opService = Provider.of<OpinionsPlaguesService>(context);
     return opService;
   }
-
-//Controlar si no hay opiniones del tipo que se busca.
 
   Widget builListView(BuildContext context, OpinionsPlaguesService opService,
           List<OpinionData> opinions) =>
@@ -238,14 +239,10 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                 children: [
                                   MaterialButton(
                                     splashColor: Colors.purpleAccent,
-                                    onPressed: () {
-                                      setState(() {
-                                        opService
-                                            .postLike(opinion.id.toString());
-                                        Navigator.pushReplacementNamed(
-                                            context, 'opinions');
-                                      });
-                                    },
+                                    onPressed: () => setState(() {
+                                      opService.postLike(opinion.id.toString());
+                                      opinion.numLikes = opinion.numLikes! + 1;
+                                    }),
                                     child: Row(
                                       children: [
                                         const Icon(
@@ -262,27 +259,6 @@ class _OpinionScreenState extends State<OpinionScreen> {
                                       ],
                                     ),
                                   )
-                                  /*
-                                  IconButton(
-                                    color: Colors.deepPurple,
-                                    splashColor: Colors.deepPurple,
-                                    hoverColor: Colors.purple,
-                                    highlightColor: Colors.purple,
-                                    onPressed: () {
-                                      setState(() {
-                                        opService
-                                            .postLike(opinion.id.toString());
-                                        Navigator.pushReplacementNamed(
-                                            context, 'opinions');
-                                      });
-                                    },
-                                    icon:
-                                        const Icon(CupertinoIcons.heart_solid),
-                                  ),
-                                  Text(
-                                    opinion.numLikes.toString(),
-                                    style: const TextStyle(fontSize: 20),
-                                  ),*/
                                 ],
                               )
                             ],

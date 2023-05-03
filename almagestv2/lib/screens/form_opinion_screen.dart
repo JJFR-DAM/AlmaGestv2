@@ -96,6 +96,7 @@ class _OpinionForm extends StatelessWidget with InputValidationMixin {
             keyboardType: TextInputType.multiline,
             textCapitalization: TextCapitalization.sentences,
             maxLines: 3,
+            maxLength: 210,
             decoration: InputDecorations.authInputDecoration(
               hintText: '',
               labelText: 'Description',
