@@ -10,6 +10,8 @@ import 'package:almagestv2/models/models.dart';
 List<PlagueData> plaguesList = [];
 
 class PlagueScreen extends StatefulWidget {
+  static List<ProductData> products = [];
+
   const PlagueScreen({Key? key}) : super(key: key);
 
   @override
@@ -20,13 +22,14 @@ class _PlagueScreenState extends State<PlagueScreen> {
   Future refresh() async {
     final opService =
         Provider.of<OpinionsPlaguesService>(context, listen: false);
+    final pService = Provider.of<ProductsService>(context, listen: false);
     setState(() {
-      opService.opinions.clear();
       opService.plagues.clear();
       plaguesList.clear();
+      PlagueScreen.products.clear();
     });
-    await opService.getOpinions();
     await opService.getPlagues();
+    await pService.getProducts();
     for (var i in opService.plagues.cast<PlagueData>()) {
       plaguesList.add(i);
     }
@@ -53,6 +56,8 @@ class _PlagueScreenState extends State<PlagueScreen> {
     final opService =
         Provider.of<OpinionsPlaguesService>(context, listen: false);
     final userService = Provider.of<UserService>(context, listen: false);
+    final pService = Provider.of<ProductsService>(context, listen: false);
+    PlagueScreen.products = pService.products.cast<ProductData>();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -105,6 +110,13 @@ class _PlagueScreenState extends State<PlagueScreen> {
         },
         child: builListView(
             context, buildOpinionsPlaguesService(context), plaguesList),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const FormPlagueScreen()));
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

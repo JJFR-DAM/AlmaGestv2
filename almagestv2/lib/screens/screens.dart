@@ -8,3 +8,4 @@ export 'package:almagestv2/screens/update_screen.dart';
 export 'package:almagestv2/screens/opinion_screen.dart';
 export 'package:almagestv2/screens/form_opinion_screen.dart';
 export 'package:almagestv2/screens/plague_screen.dart';
+export 'package:almagestv2/screens/form_plague_screen.dart';

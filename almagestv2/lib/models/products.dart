@@ -1,16 +1,16 @@
-class Plagues {
+class Products {
   bool? success;
-  List<PlagueData>? data;
+  List<ProductData>? data;
   String? message;
 
-  Plagues({this.success, this.data, this.message});
+  Products({this.success, this.data, this.message});
 
-  Plagues.fromJson(Map<String, dynamic> json) {
+  Products.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <PlagueData>[];
+      data = <ProductData>[];
       json['data'].forEach((v) {
-        data!.add(PlagueData.fromJson(v));
+        data!.add(ProductData.fromJson(v));
       });
     }
     message = json['message'];
@@ -27,28 +27,21 @@ class Plagues {
   }
 }
 
-class PlagueData {
+class ProductData {
   int? id;
   String? name;
   String? img;
-  int? deleted;
+  String? howToUse;
   String? createdAt;
   String? updatedAt;
 
-  PlagueData({
-    this.id,
-    this.name,
-    this.img,
-    this.deleted,
-    this.createdAt,
-    this.updatedAt,
-  });
+  ProductData({this.id, this.name, this.img, this.createdAt, this.updatedAt});
 
-  PlagueData.fromJson(Map<String, dynamic> json) {
+  ProductData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     img = json['img'];
-    deleted = json['deleted'];
+    howToUse = json['how_to_use'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -58,7 +51,7 @@ class PlagueData {
     data['id'] = id;
     data['name'] = name;
     data['img'] = img;
-    data['deleted'] = deleted;
+    data['how_to_use'] = howToUse;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     return data;

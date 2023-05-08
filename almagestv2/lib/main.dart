@@ -22,6 +22,10 @@ class AppState extends StatelessWidget {
           create: (_) => OpinionsPlaguesService(),
           lazy: false,
         ),
+        ChangeNotifierProvider(
+          create: (_) => ProductsService(),
+          lazy: false,
+        ),
       ],
       child: const MyApp(),
     );

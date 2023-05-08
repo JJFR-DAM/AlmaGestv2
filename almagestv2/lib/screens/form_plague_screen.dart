@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:almagestv2/Models/models.dart';
+import 'package:almagestv2/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +12,8 @@ import 'package:almagestv2/ui/input_decorations.dart';
 import 'package:almagestv2/providers/providers.dart';
 import 'package:almagestv2/widgets/widgets.dart';
 
-class FormOpinionScreen extends StatelessWidget {
-  const FormOpinionScreen({Key? key}) : super(key: key);
+class FormPlagueScreen extends StatelessWidget {
+  const FormPlagueScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class FormOpinionScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.headlineMedium),
                   const SizedBox(height: 30),
                   ChangeNotifierProvider(
-                      create: (_) => PlagueFormProvider(), child: _plagueForm())
+                      create: (_) => PlagueFormProvider(), child: _PlagueForm())
                 ],
               )),
               const SizedBox(height: 50),
@@ -58,14 +59,13 @@ class FormOpinionScreen extends StatelessWidget {
 }
 
 // ignore: must_be_immutable
-class _plagueForm extends StatelessWidget with InputValidationMixin {
+class _PlagueForm extends StatelessWidget with InputValidationMixin {
   @override
   Widget build(BuildContext context) {
     final plagueForm = Provider.of<PlagueFormProvider>(context);
-    OpinionsPlaguesService opService = OpinionsPlaguesService();
-    opService.getPlagues();
-    opService.getOpinions();
-    List<PlagueData> plaguesList = OpinionScreen.plagues;
+    ProductsService pService = ProductsService();
+    pService.getProducts();
+    List<ProductData> productsList = PlagueScreen.products;
     return Form(
       key: plagueForm.formKey,
       child: Column(
@@ -81,7 +81,7 @@ class _plagueForm extends StatelessWidget with InputValidationMixin {
               labelText: 'Name',
               prefixIcon: Icons.title_rounded,
             ),
-            onChanged: (value) => plagueForm.headline = value,
+            onChanged: (value) => plagueForm.name = value,
             validator: (text) {
               if (isTextValid(text)) {
                 return null;
@@ -98,10 +98,10 @@ class _plagueForm extends StatelessWidget with InputValidationMixin {
             maxLength: 210,
             decoration: InputDecorations.authInputDecoration(
               hintText: '',
-              labelText: 'Image',
+              labelText: 'Image(Optional)',
               prefixIcon: Icons.line_style_rounded,
             ),
-            onChanged: (value) => plagueForm.description = value,
+            onChanged: (value) => plagueForm.img = value,
             validator: (text) {
               if (isTextValid(text)) {
                 return null;
@@ -117,17 +117,16 @@ class _plagueForm extends StatelessWidget with InputValidationMixin {
             iconDisabledColor: Colors.deepPurpleAccent,
             focusColor: Colors.deepPurpleAccent,
             onChanged: (value) {
-              plagueForm.plagueId = value!.id.toString();
-              plagueForm.plagueName = value.name.toString();
+              plagueForm.productId = value!.id.toString();
             },
-            items: plaguesList.map((e) {
+            items: productsList.map((e) {
               return DropdownMenuItem(
                 value: e,
                 child: Text(e.name.toString()),
               );
             }).toList(),
             validator: (value) {
-              return (value!.name != null) ? null : 'Select a Plague';
+              return (value!.name != null) ? null : 'Select a Product';
             },
           ),
           const SizedBox(height: 30),
@@ -145,10 +144,10 @@ class _plagueForm extends StatelessWidget with InputValidationMixin {
 
                       if (!plagueForm.isValidForm()) return;
                       plagueForm.isLoading = true;
-                      final String? errorMessage = await opService.postOpinion(
-                        plagueForm.id,
+                      final String? errorMessage = await opService.postPlague(
                         plagueForm.name,
                         plagueForm.img,
+                        plagueForm.productId,
                       );
                       if (errorMessage == 'Plague created successfully.') {
                         customToast('Created succesfully', context);

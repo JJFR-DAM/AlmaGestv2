@@ -16,11 +16,17 @@ class OpinionsPlaguesService extends ChangeNotifier {
 
   Future getPlagues() async {
     final url = Uri.http(baseURL, '/public/api/plagues', {});
+    String? token = await userService.readToken();
     isLoading = true;
     notifyListeners();
 
     final response = await http.get(
       url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
     );
 
     final Map<String, dynamic> decoded = json.decode(response.body);
@@ -31,6 +37,30 @@ class OpinionsPlaguesService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return plagues;
+  }
+
+  Future postPlague(String name, String img, String productId) async {
+    final Map<String, dynamic> createData = {
+      'name': name,
+      'img': img,
+      'product_id': productId
+    };
+    final url = Uri.http(baseURL, '/public/api/plagues', createData);
+    String? token = await userService.readToken();
+    isLoading = true;
+    notifyListeners();
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    final Map<String, dynamic> decoded = json.decode(response.body);
+
+    return decoded['message'];
   }
 
   Future<List<OpinionData>> getOpinions() async {
