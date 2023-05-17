@@ -10,6 +10,7 @@ import 'package:almagestv2/models/models.dart';
 class UserService extends ChangeNotifier {
   final String baseURL = 'semillero.allsites.es';
   final storage = const FlutterSecureStorage();
+  static String userEmail = '';
   static String userId = '';
   bool isLoading = true;
   final List<UserData> users = [];
@@ -69,6 +70,7 @@ class UserService extends ChangeNotifier {
 
     if (decoded['success'] == true) {
       UserService.userId = decoded['data']['id'].toString();
+      UserService.userEmail = email;
       await storage.write(key: 'token', value: decoded['data']['token']);
       await storage.write(key: 'id', value: decoded['data']['id'].toString());
       return decoded['data']['type'] +

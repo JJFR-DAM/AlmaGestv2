@@ -15,6 +15,7 @@ class OpinionsPlaguesService extends ChangeNotifier {
   final UserService userService = UserService();
 
   Future getPlagues() async {
+    plagues.clear();
     final url = Uri.http(baseURL, '/public/api/plagues', {});
     String? token = await userService.readToken();
     isLoading = true;

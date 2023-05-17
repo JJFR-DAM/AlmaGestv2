@@ -7,10 +7,10 @@ import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/services/services.dart';
 import 'package:almagestv2/models/models.dart';
 
-List<PlagueData> plaguesList = [];
-
 class PlagueScreen extends StatefulWidget {
   static List<ProductData> products = [];
+
+  static List<PlagueData> plaguesList = [];
 
   const PlagueScreen({Key? key}) : super(key: key);
 
@@ -25,15 +25,21 @@ class _PlagueScreenState extends State<PlagueScreen> {
     final pService = Provider.of<ProductsService>(context, listen: false);
     setState(() {
       opService.plagues.clear();
-      plaguesList.clear();
+      PlagueScreen.plaguesList.clear();
       PlagueScreen.products.clear();
     });
     await opService.getPlagues();
     await pService.getProducts();
-    for (var i in opService.plagues.cast<PlagueData>()) {
-      plaguesList.add(i);
-    }
-    plaguesList.sort((a, b) => a.name.toString().compareTo(b.name.toString()));
+
+    setState(() {
+      for (var i in opService.plagues.cast<PlagueData>()) {
+        if (i.deleted == 0) {
+          PlagueScreen.plaguesList.add(i);
+        }
+      }
+      PlagueScreen.plaguesList
+          .sort((a, b) => a.name.toString().compareTo(b.name.toString()));
+    });
   }
 
   @override
@@ -76,15 +82,16 @@ class _PlagueScreenState extends State<PlagueScreen> {
             width: 150,
             child: TextField(
               onChanged: (value) => setState(() {
-                plaguesList.clear();
+                PlagueScreen.plaguesList.clear();
                 for (var i in opService.plagues.cast<PlagueData>()) {
                   if (i.name
-                      .toString()
-                      .toLowerCase()
-                      .contains(value.toLowerCase())) {
-                    plaguesList.add(i);
+                          .toString()
+                          .toLowerCase()
+                          .contains(value.toLowerCase()) &&
+                      i.deleted == 0) {
+                    PlagueScreen.plaguesList.add(i);
                   }
-                  plaguesList.sort(
+                  PlagueScreen.plaguesList.sort(
                       (a, b) => a.name.toString().compareTo(b.name.toString()));
                 }
               }),
@@ -108,8 +115,8 @@ class _PlagueScreenState extends State<PlagueScreen> {
         onRefresh: () async {
           Navigator.pushReplacementNamed(context, 'plagues');
         },
-        child: builListView(
-            context, buildOpinionsPlaguesService(context), plaguesList),
+        child: builListView(context, buildOpinionsPlaguesService(context),
+            PlagueScreen.plaguesList),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

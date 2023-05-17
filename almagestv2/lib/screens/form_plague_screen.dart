@@ -1,10 +1,16 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_print
 
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:almagestv2/Models/models.dart';
 import 'package:almagestv2/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/services/services.dart';
@@ -75,7 +81,7 @@ class _PlagueForm extends StatelessWidget with InputValidationMixin {
             keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
             textCapitalization: TextCapitalization.characters,
-            maxLength: 24,
+            maxLength: 16,
             decoration: InputDecorations.authInputDecoration(
               hintText: '',
               labelText: 'Name',
@@ -98,7 +104,7 @@ class _PlagueForm extends StatelessWidget with InputValidationMixin {
             maxLength: 210,
             decoration: InputDecorations.authInputDecoration(
               hintText: '',
-              labelText: 'Image(Optional)',
+              labelText: 'ImageLink(Optional)',
               prefixIcon: Icons.line_style_rounded,
             ),
             onChanged: (value) => plagueForm.img = value,
@@ -149,12 +155,115 @@ class _PlagueForm extends StatelessWidget with InputValidationMixin {
                         plagueForm.img,
                         plagueForm.productId,
                       );
+
                       if (errorMessage == 'Plague created successfully.') {
+                        final pdf = pw.Document();
+                        opService.getPlagues();
+                        for (var i in PlagueScreen.plaguesList) {
+                          final netImage = await networkImage(i.img.toString());
+                          final font = await PdfGoogleFonts.nunitoExtraLight();
+
+                          pdf.addPage(pw.Page(
+                              pageFormat: PdfPageFormat.a4,
+                              build: (pw.Context context) {
+                                return pw.Column(
+                                    mainAxisAlignment:
+                                        pw.MainAxisAlignment.center,
+                                    children: [
+                                      pw.Row(
+                                          mainAxisAlignment:
+                                              pw.MainAxisAlignment.center,
+                                          children: [
+                                            pw.Text(
+                                              i.name.toString().toUpperCase(),
+                                              style: pw.TextStyle(
+                                                  font: font,
+                                                  fontSize: 20,
+                                                  fontWeight:
+                                                      pw.FontWeight.bold),
+                                            ),
+                                          ]),
+                                      pw.SizedBox(height: 40),
+                                      pw.Row(
+                                        mainAxisAlignment:
+                                            pw.MainAxisAlignment.center,
+                                        children: [
+                                          pw.Image(
+                                            netImage,
+                                            height: 500,
+                                            width: 400,
+                                          )
+                                        ],
+                                      ),
+                                    ]);
+                              }));
+                        }
+
+                        final netImage =
+                            await networkImage(plagueForm.img.toString());
+                        final font = await PdfGoogleFonts.nunitoExtraLight();
+                        pdf.addPage(pw.Page(
+                            pageFormat: PdfPageFormat.a4,
+                            build: (pw.Context context) {
+                              return pw.Column(
+                                  mainAxisAlignment:
+                                      pw.MainAxisAlignment.center,
+                                  children: [
+                                    pw.Row(
+                                        mainAxisAlignment:
+                                            pw.MainAxisAlignment.center,
+                                        children: [
+                                          pw.Text(
+                                            plagueForm.name
+                                                .toString()
+                                                .toUpperCase(),
+                                            style: pw.TextStyle(
+                                                font: font,
+                                                fontSize: 20,
+                                                fontWeight: pw.FontWeight.bold),
+                                          ),
+                                        ]),
+                                    pw.SizedBox(height: 20),
+                                    pw.Row(
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.center,
+                                      children: [
+                                        pw.Image(
+                                          netImage,
+                                          height: 500,
+                                          width: 400,
+                                        )
+                                      ],
+                                    ),
+                                  ]);
+                            }));
+                        String emailResponse;
+                        try {
+                          final output = await getTemporaryDirectory();
+                          DateTime dateToday = DateTime.now();
+                          String dateT = dateToday.toString().substring(0, 10);
+
+                          final file =
+                              File("${"${output.path}/$dateT-plagues"}.pdf");
+                          await file.writeAsBytes(await pdf.save());
+                          final Email email = Email(
+                            subject: 'Plagues.pdf',
+                            body: 'Auto generated PDF with the plagues.',
+                            recipients: [UserService.userEmail],
+                            attachmentPaths: [file.path],
+                            isHTML: false,
+                          );
+                          await FlutterEmailSender.send(email);
+                          emailResponse = 'success';
+                        } catch (error) {
+                          print(error);
+                          print('No envia el correo $error');
+                          emailResponse = error.toString();
+                        }
                         customToast('Created succesfully', context);
-                        Navigator.pushReplacementNamed(context, 'opinions');
+                        Navigator.pushReplacementNamed(context, 'plagues');
                       } else {
                         plagueForm.isLoading = false;
-                        // ignore: avoid_print
                         print(errorMessage);
                       }
                     },
