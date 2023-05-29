@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
           'update': (_) => const UpdateScreen(),
           'opinions': (_) => const OpinionScreen(),
           'plagues': (_) => const PlagueScreen(),
+          'graphic': (_) => const GraphicScreen(),
         },
         theme: ThemeData.light().copyWith(
             scaffoldBackgroundColor: Colors.grey[300],

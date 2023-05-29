@@ -605,6 +605,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  pie_chart:
+    dependency: "direct main"
+    description:
+      name: pie_chart
+      sha256: "5dba6d0eb4718e8ed00a9079361cd8947c3f84ac5a5d76f05a27f4ec5e27589e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.2"
   platform:
     dependency: transitive
     description:
@@ -770,6 +778,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  syncfusion_flutter_charts:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_charts
+      sha256: bdb7cc5814ceb187793cea587f4a5946afcffd96726b219cee79df8460f44b7b
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.2.4"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: "998d242c1f022eccf53f414a4343af34ab980700fee36cef8f78d94538ca749f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.2.6"
   term_glyph:
     dependency: transitive
     description:

@@ -1,4 +1,5 @@
 import 'package:almagestv2/screens/screens.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cool_alert/cool_alert.dart';
@@ -14,6 +15,8 @@ List<UserData> users = [];
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({Key? key}) : super(key: key);
+  static List<PlagueData> plagues = [];
+  static int selectedItem = 0;
 
   @override
   State<AdminScreen> createState() => _AdminScreenState();
@@ -23,13 +26,30 @@ class _AdminScreenState extends State<AdminScreen> {
   Future refresh() async {
     setState(() => users.clear());
     var usersService = Provider.of<UserService>(context, listen: false);
+    var opService = Provider.of<OpinionsPlaguesService>(context, listen: false);
     await usersService.getUsers();
+    await opService.getPlagues();
+    AdminScreen.plagues.clear();
+    for (var i in opService.plagues.cast<PlagueData>()) {
+      if (i.deleted == 0) {
+        AdminScreen.plagues.add(i);
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
     refresh();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      AdminScreen.selectedItem = index;
+    });
+    if (AdminScreen.selectedItem == 1) {
+      Navigator.pushReplacementNamed(context, 'graphic');
+    }
   }
 
   @override
@@ -56,6 +76,17 @@ class _AdminScreenState extends State<AdminScreen> {
               Navigator.pushReplacementNamed(context, 'login');
             },
           ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.list_bullet), label: 'Users'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.donut_small), label: 'Graphic'),
+          ],
+          currentIndex: OpinionScreen.selectedItem,
+          selectedItemColor: Colors.deepPurple,
+          onTap: _onItemTapped,
         ),
         body: RefreshIndicator(
           onRefresh: () async {

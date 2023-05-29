@@ -50,6 +50,8 @@ dependencies:
   flutter_email_sender: ^5.2.0
   filesystem_picker: ^3.1.0
   printing: ^5.10.4
+  syncfusion_flutter_charts: ^21.2.4
+  pie_chart: ^5.3.2
 
 dev_dependencies:
   flutter_test:

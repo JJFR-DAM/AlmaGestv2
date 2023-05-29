@@ -1,9 +1,9 @@
-import 'package:almagestv2/screens/screens.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
+import 'package:almagestv2/screens/screens.dart';
 import 'package:almagestv2/models/models.dart';
 import 'package:almagestv2/services/services.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +40,11 @@ class _OpinionScreenState extends State<OpinionScreen> {
     }
     opinionsList
         .sort((a, b) => a.headline.toString().compareTo(b.headline.toString()));
+    for (var i in opService.plagues.cast<PlagueData>()) {
+      if (i.deleted == 0) {
+        OpinionScreen.plagues.add(i);
+      }
+    }
   }
 
   @override
@@ -62,7 +67,6 @@ class _OpinionScreenState extends State<OpinionScreen> {
     final opService =
         Provider.of<OpinionsPlaguesService>(context, listen: false);
     final userService = Provider.of<UserService>(context, listen: false);
-    OpinionScreen.plagues = opService.plagues.cast<PlagueData>();
 
     return Scaffold(
       appBar: AppBar(
